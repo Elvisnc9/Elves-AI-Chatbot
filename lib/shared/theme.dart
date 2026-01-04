@@ -8,30 +8,30 @@ class AppTheme {
       brightness: Brightness.dark,
       scaffoldBackgroundColor: AppColors.primary,
         textTheme: TextTheme(
-    displayLarge: GoogleFonts.poppins(
-      fontSize: 24.sp,
-      height: 1.4,
+    displayLarge: GoogleFonts.plusJakartaSans(
+      fontSize: 25.sp,
+      height: 1.5,
       fontWeight: FontWeight.bold,
     ),
-     displayMedium: GoogleFonts.poppins(
+     displayMedium: GoogleFonts.plusJakartaSans(
       fontSize: 16.sp,
       fontWeight: FontWeight.w600,
       height: 1.4,
      color: AppColors.light
     ),
-    displaySmall: GoogleFonts.poppins(
+    displaySmall: GoogleFonts.plusJakartaSans(
       fontSize: 17.sp,
       fontWeight: FontWeight.bold,
      color: Colors.white
     ),
 
-    labelMedium: GoogleFonts.poppins(
+    labelMedium: GoogleFonts.plusJakartaSans(
       fontSize: 14.sp,
       fontWeight: FontWeight.w500,
      color: AppColors.light.withOpacity(0.8)
     
     ),
-      labelLarge: GoogleFonts.poppins(
+      labelLarge: GoogleFonts.plusJakartaSans(
       fontSize: 17.sp,
       fontWeight: FontWeight.w500,
      color: AppColors.light.withOpacity(0.95)

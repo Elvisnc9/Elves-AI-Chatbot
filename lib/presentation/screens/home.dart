@@ -64,7 +64,7 @@ class HomeContent extends ConsumerWidget {
          Row(
            children: [
              Text(
-                'Save Your Time\nWith ELVES Chat Bot.', 
+                'Save Your Time \nWith  Elves  Chat  Bot.', 
                 style: textTheme.displayLarge
               ),
 
@@ -174,8 +174,8 @@ class PromptCards extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Container(
-      height: 22.h,
-      width: 50.w,
+      height: 25.h,
+      width: 55.w,
       decoration: BoxDecoration(
         color: AppColors.light,
         borderRadius: BorderRadius.circular(30),
@@ -190,8 +190,35 @@ class PromptCards extends StatelessWidget {
             Text(
               'Midjourney\n Prompt\n Generator',
               style: textTheme.displayLarge?.copyWith(
-                color: AppColors.dark, fontWeight: FontWeight.w500),
-            )]),
+                color: AppColors.dark, fontWeight: FontWeight.w600, height: 1.4),
+            ),
+            
+            Text(
+              'Generate AI by Kenny',
+              style: textTheme.labelLarge?.copyWith(
+                fontSize: 15.sp,
+                color: AppColors.dark.withOpacity(0.5),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            Container(
+              margin: EdgeInsets.only(top: 1.5.h),
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.h),
+              decoration: BoxDecoration(
+                color: AppColors.accent,
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Text(
+                'Use this Prompt',
+                style: textTheme.labelMedium?.copyWith(
+                  
+                  color: AppColors.light,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            )
+            ]),
       )
   
 

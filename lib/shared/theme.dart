@@ -9,7 +9,7 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.primary,
         textTheme: TextTheme(
     displayLarge: GoogleFonts.plusJakartaSans(
-      fontSize: 25.sp,
+      fontSize: 23.sp,
       height: 1.5,
       fontWeight: FontWeight.bold,
     ),
@@ -27,7 +27,16 @@ class AppTheme {
 
     labelMedium: GoogleFonts.plusJakartaSans(
       fontSize: 14.sp,
-      fontWeight: FontWeight.w500,
+      fontWeight: FontWeight.bold,
+     color: AppColors.light.withOpacity(0.8)
+    
+    ),
+
+     
+
+    labelSmall: GoogleFonts.plusJakartaSans(
+      fontSize: 13.sp,
+      fontWeight: FontWeight.bold,
      color: AppColors.light.withOpacity(0.8)
     
     ),

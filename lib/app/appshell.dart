@@ -16,7 +16,7 @@ class AppShell extends ConsumerWidget {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF3A1C71), Color(0xFF0F0B1E)],
+            colors: [Color.fromARGB(238, 81, 55, 129), Color.fromARGB(255, 1, 0, 4)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),

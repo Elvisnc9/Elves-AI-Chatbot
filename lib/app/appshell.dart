@@ -1,5 +1,6 @@
 import 'package:elves_chatbot/presentation/screens/chatScreen.dart';
 import 'package:elves_chatbot/presentation/screens/home.dart';
+import 'package:elves_chatbot/shared/theme.dart';
 import 'package:elves_chatbot/state/shellView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -13,14 +14,9 @@ class AppShell extends ConsumerWidget {
     final view = ref.watch(shellViewProvider);
 
     return Scaffold(
+      backgroundColor: AppColors.dark,
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color.fromARGB(238, 81, 55, 129), Color.fromARGB(255, 1, 0, 4)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+        
         child: SafeArea(
           child: Stack(
             children: [

@@ -27,19 +27,57 @@ class ChatView extends ConsumerWidget {
                           ShellView.home;
                     },
                   ),
-                  Spacer(),
 
-                  Text(
-                    'ELVES  Chat  Bot',
-                    style: textTheme.displayLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22.sp,
+                  SizedBox(width: 4.w),
+
+                  Container(
+                    padding: EdgeInsets.all(1.h),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade900,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: AppColors.light, width: 0.9),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.star, color: Colors.yellow, size: 2.h),
+                        SizedBox(width: 1.w),
+                        Text(
+                          'Upgrade ',
+                          style: textTheme.displayLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.yellow,
+                            fontSize: 12.sp,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
 
                   Spacer(),
 
-                  HeroButton(icon: Icons.more_horiz, onPressed: () {}),
+                  Container(
+                    padding: EdgeInsets.all(1.h),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade900,
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(color: AppColors.light, width: 0.9),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.person_2_outlined,
+                          color: AppColors.light,
+                          size: 2.5.h,
+                        ),
+                        SizedBox(width: 4.w),
+                        Icon(
+                          Icons.settings,
+                          color: AppColors.light,
+                          size: 2.5.h,
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -47,60 +85,65 @@ class ChatView extends ConsumerWidget {
 
           Positioned(
             bottom: 10,
-            left: 0,
-            right: 0,
+            left: 12,
+            right: 12,
             child: Row(
               children: [
+                /// ➕ Add button
                 Container(
-                  width: 75.w,
-                  padding: EdgeInsets.symmetric( 
-                    horizontal: 4.w,
-                    vertical: 2.5.h,
-                  ),
+                  padding: EdgeInsets.all(1.h),
                   decoration: BoxDecoration(
-                    color: AppColors.light,
-                    borderRadius: BorderRadius.circular(40),
+                    color: Colors.grey.shade900,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.light, width: 0.9),
                   ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // File / Attach Icon
-                      Icon(
-                        Icons.attach_file,
-                        color: Colors.grey.shade700,
-                        size: 25.sp,
-                      ),
-                
-                      const SizedBox(width: 8),
+                  child: Icon(Icons.add, color: AppColors.light, size: 2.5.h),
+                ),
 
-                      VerticalDivider(
-                        color: Colors.grey.shade400,
-                        thickness: 1,
-                        width: 1,
-                      )
-                
-                      // TextField takes remaining space
-                      // Expanded(
-                      //   child: TextField(
-                      //     decoration: InputDecoration(
-                      //       hintText: "Type message...",
-                      //       hintStyle: TextStyle(color: Colors.grey),
-                      //       border: InputBorder.none, // VERY IMPORTANT
-                      //       isDense: true,
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
+                SizedBox(width: 2.w),
+
+                /// 💬 TextField Container
+                Expanded(
+                  child: Container(
+                    height: 6.h,
+                    padding: EdgeInsets.symmetric(horizontal: 3.w),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade900,
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(color: AppColors.light, width: 0.9),
+                    ),
+                    child: Row(
+                      children: [
+                        /// TEXTFIELD (THIS WAS THE MAIN ISSUE)
+                        Expanded(
+                          child: TextField(
+                            decoration: InputDecoration(
+                              hintText: 'Ask Elves Anything...',
+                              hintStyle: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 1.5.h,
+                              ),
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(width: 2.w),
+
+                        /// 🎤 Mic button
+                        CircleAvatar(
+                          radius: 18,
+                          backgroundColor: AppColors.accent.withOpacity(0.8),
+                          child: Icon(
+                            Icons.mic,
+                            color: Colors.white,
+                            size: 2.h,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                Spacer(),
-                CircleAvatar(
-                  radius: 30,
-                  backgroundColor: AppColors.light,
-                  child: IconButton(
-                    icon: Icon(Icons.mic, color: AppColors.dark, size: 30,),
-                    onPressed: () {},
-                  ))
               ],
             ),
           ),
@@ -118,12 +161,16 @@ class HeroButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CircleAvatar(
-      radius: 26,
-      backgroundColor: AppColors.accent.withOpacity(0.8),
-      child: IconButton(
-        icon: Icon(icon, color: Colors.white),
-        onPressed: onPressed,
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        padding: EdgeInsets.all(1.h),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade900,
+          shape: BoxShape.circle,
+          border: Border.all(color: AppColors.light, width: 0.9),
+        ),
+        child: Icon(icon, color: AppColors.light, size: 2.h),
       ),
     );
   }

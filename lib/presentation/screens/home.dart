@@ -50,9 +50,14 @@ class HomeSkeleton extends StatelessWidget {
 
 
 
-class HomeContent extends ConsumerWidget {
- HomeContent({super.key});
-  final List<PromptModel> promptList = [
+class HomeContent extends ConsumerStatefulWidget {
+const  HomeContent({super.key});
+
+  @override
+  ConsumerState<HomeContent> createState() => _HomeContentState();
+}
+  class _HomeContentState extends ConsumerState<HomeContent> {
+ final List<PromptModel> promptList = [
   PromptModel(
     title: 'Midjourney\nPrompt\nGenerator',
     subtitle: 'Generate AI by Kenny',
@@ -85,8 +90,16 @@ class HomeContent extends ConsumerWidget {
   ),
 ];
 
+ String activePromptId = '';
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void initState() {
+    super.initState();
+    activePromptId = promptList.first.title;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,8 +116,8 @@ class HomeContent extends ConsumerWidget {
             const Spacer(),
              
               Container(
-                height: 60,
-                width: 60,
+                height: 50,
+                width: 50,
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.1),
                   shape: BoxShape.circle,
@@ -136,11 +149,8 @@ class HomeContent extends ConsumerWidget {
               SizedBox(height: 1.4.h),
               Row(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      ref.read(shellViewProvider.notifier).state = ShellView.chat;
-                    },
-                    child: Container(
+                 
+                     Container(
                       width: 75.w,
                       height: 54,
                       alignment: Alignment.centerLeft,
@@ -151,11 +161,11 @@ class HomeContent extends ConsumerWidget {
                       ),
                       child:  Text('Search here...', 
                       textAlign: TextAlign.start, style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.white.withOpacity(0.8),
                         fontSize: 16.sp
                       ),),
                     ),
-                  ),
+                  
                   
                   SizedBox(width: 4.w),
                   CircleAvatar(
@@ -190,9 +200,18 @@ class HomeContent extends ConsumerWidget {
               scrollDirection: Axis.horizontal,
               itemCount: promptList.length,
               itemBuilder: (context, index) {
+                final prompt = promptList[index];
+                final isActive = prompt.title == activePromptId;
+
                   return Padding(
                     padding: EdgeInsets.only(right: 4.w),
-                    child: PromptCards(model: promptList[index]),
+                    child: PromptCards(
+                      model: promptList[index], isActive: isActive,
+                       onSelect: (){
+                        setState(() {
+                          activePromptId = prompt.title;
+                        });
+                       },),
                   );
               },
                     ),
@@ -221,20 +240,25 @@ class HomeContent extends ConsumerWidget {
                     ),
                   ),
 
-                   Container(
-                padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 2.5.h),
-                decoration: BoxDecoration(
-                  color: AppColors.light,
-                  borderRadius: BorderRadius.circular(40),
-                ),
-                child: Text(
-                  'Create New Chat',
-                  style: textTheme.labelMedium?.copyWith(
-                    color: AppColors.dark,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+                   GestureDetector(
+                    onTap: () {
+                      ref.read(shellViewProvider.notifier).state = ShellView.chat;
+                    },
+                     child: Container(
+                                     padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 2.5.h),
+                                     decoration: BoxDecoration(
+                                       color: AppColors.light,
+                                       borderRadius: BorderRadius.circular(40),
+                                     ),
+                                     child: Text(
+                                       'Create New Chat',
+                                       style: textTheme.labelMedium?.copyWith(
+                      color: AppColors.dark,
+                      fontWeight: FontWeight.bold,
+                                       ),
+                                     ),
+                                   ),
+                   ),
            
          ],
        ),
@@ -293,68 +317,106 @@ class PromptModel {
 
 
 class PromptCards extends StatelessWidget {
-   const PromptCards({super.key, required this.model});
+   const PromptCards({super.key, required this.model, required this.isActive, required this.onSelect});
 
    final PromptModel model;
+   final bool  isActive;
+   final VoidCallback onSelect;
 
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    return Container(
-      height: 25.h,
-      width: 55.w,
-      decoration: BoxDecoration(
-        color: AppColors.light,
-        borderRadius: BorderRadius.circular(30),
-      ),
-
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              model.title,
-              style: textTheme.displayLarge?.copyWith(
-                color: AppColors.dark, fontWeight: FontWeight.w600, height: 1.4),
-            ),
-            
-            Text(
-              model.subtitle,
-              style: textTheme.labelLarge?.copyWith(
-                fontSize: 15.sp,
-                color: AppColors.dark.withOpacity(0.5),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            GestureDetector(
-              onTap: model.onTap,
-              child: Container(
-                margin: EdgeInsets.only(top: 1.5.h),
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.h),
+    return GestureDetector(
+      onTap: onSelect,
+      child: AnimatedScale(
+        scale : isActive? 1.0 :0.9,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+        child: AnimatedOpacity(
+          opacity: isActive ? 1.0 : 0.65,
+          duration: Duration(milliseconds: 300),
+          child: Stack(
+            children: [
+              Container(
+                height: 28.h,
+                width: 55.w,
                 decoration: BoxDecoration(
-                  color: AppColors.accent,
-                  borderRadius: BorderRadius.circular(40),
+                  color: AppColors.light,
+                  borderRadius: BorderRadius.circular(30),
                 ),
-                child: Text(
-                  'Use this Prompt',
-                  style: textTheme.labelMedium?.copyWith(
-                    
-                    color: AppColors.light,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+              
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        model.title,
+                        style: textTheme.displayLarge?.copyWith(
+                          color: AppColors.dark, fontWeight: FontWeight.bold, height: 1.4),
+                      ),
+                      
+                      Text(
+                        model.subtitle,
+                        style: textTheme.labelLarge?.copyWith(
+                          fontSize: 15.sp,
+                          color: AppColors.dark.withOpacity(0.5),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+              
+                      const SizedBox(height: 16),
+              
+                      GestureDetector(
+                        onTap: model.onTap,
+                        child: Container(
+                          margin: EdgeInsets.only(top: 1.5.h),
+                          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.h),
+                          decoration: BoxDecoration(
+                            color: AppColors.accent,
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                          child: Text(
+                            'Use this Prompt',
+                            style: textTheme.labelMedium?.copyWith(
+                              
+                              color: AppColors.light,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      )
+                      ]),
+                )
+                
+              
               ),
-            )
-            ]),
-      )
-  
 
+              if(!isActive)
+              Positioned.fill(
+                child: ShaderMask(
+                  shaderCallback: (rect){
+                    return LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.white.withOpacity(0.8),
+                        Colors.white.withOpacity(0.8),
+                      ],
+                    ).createShader(rect);
+                  
+                  
+                  },
+                  blendMode: BlendMode.srcATop,
+                  child: Container(
+                    color: Colors.white.withOpacity(0.2),
+                    )))
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -414,6 +476,6 @@ class RecentChats extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ).animate().fadeIn().slideY(begin: 0.2);
   }
 }

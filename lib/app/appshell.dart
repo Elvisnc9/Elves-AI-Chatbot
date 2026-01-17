@@ -1,5 +1,6 @@
 import 'package:elves_chatbot/presentation/screens/chatScreen.dart';
 import 'package:elves_chatbot/presentation/screens/home.dart';
+import 'package:elves_chatbot/presentation/screens/settings.dart';
 import 'package:elves_chatbot/shared/theme.dart';
 import 'package:elves_chatbot/state/shellView.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,9 @@ class AppShell extends ConsumerWidget {
                 duration: 350.ms,
                 child: view == ShellView.home
                     ? const HomeView(key: ValueKey('home'))
-                    : const ChatView(key: ValueKey('chat')),
+                    : view == ShellView.chat
+                    ? const ChatView(key: ValueKey('chat'))
+                    : const Settings(key: ValueKey('settings')),
               ),
             ],
           ),

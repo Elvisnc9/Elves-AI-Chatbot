@@ -1,4 +1,6 @@
 import 'package:elves_chatbot/presentation/screens/chatScreen.dart';
+import 'package:elves_chatbot/presentation/widgets/HomeWidget/AI_sectorsWidget.dart';
+import 'package:elves_chatbot/presentation/widgets/HomeWidget/chatModels.dart';
 import 'package:elves_chatbot/presentation/widgets/Skeleton/skeletonbox.dart';
 import 'package:elves_chatbot/shared/theme.dart';
 import 'package:elves_chatbot/state/shellView.dart';
@@ -65,153 +67,168 @@ const  HomeContent({super.key});
   ChatModel(
     msg: 'What are Some common mistakes to avoid\n when coding a landing Page?'
   ),
-   ChatModel(
-    msg: 'Home can i ensure that my agency\'s \nbranding is consistent across all platforms?'
+  ChatModel(
+    msg: 'What are Some common mistakes to avoid\n when coding a landing Page?'
   ),
+  ChatModel(
+    msg: 'What are Some common mistakes to avoid\n when coding a landing Page?'
+  ),
+  ChatModel(
+    msg: 'What are Some common mistakes to avoid\n when coding a landing Page?'
+  ),
+
 ];
 
- String activePromptId = '';
 
 
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return  Stack(
       children: [
-       Padding(
-         padding:  EdgeInsets.all(1.h),
-         child: Row(
-           children: [
-            HeroButton(icon: Icons.menu, onPressed: (){},).animate().fadeIn().slideX(begin: -0.2),
-             
-             Spacer(),
-             
-             Text(
-               'Elves AI',
-               style: textTheme.displayLarge?.copyWith(
-                 fontWeight: FontWeight.bold,
-                 fontSize: 16.sp,
-               ),
-             ).animate().fadeIn().slideY(begin: -0.2),
-             
-            const Spacer(),
-             
-             HeroButton(icon: Icons.person, onPressed: (){},).animate().fadeIn().slideX(begin: 0.2),
-           ],
-         ).animate().fadeIn(),
-       ),
-
-       SizedBox(
-         height: 5.h,
-       ),
-     Padding(
-       padding: const EdgeInsets.all(20.0),
-       child: Text(
-                  'How May I help you \nToday  ADAMS?', 
-                  style: textTheme.displayLarge?.copyWith(fontSize: 30.sp, )
-                ),
-     ).animate().fadeIn().slideX(begin: 0.3),
-    
-        
-    
-    
-      
-    
-    
-    Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Row (children: [
-        Container(
-          height: 25.h,
-          width: 42.w,
-          decoration: BoxDecoration(
-            color: Color(0xFF90EE90),
-            borderRadius: BorderRadius.circular(25),
-          ),),
+        SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+             Padding(
+               padding:  EdgeInsets.all(1.h),
+               child: Row(
+                 children: [
+                  HeroButton(icon: Icons.menu, onPressed: (){},).animate().fadeIn().slideX(begin: -0.2),
+                   
+                   Spacer(),
+                   
+                   Text(
+                     'Elves AI',
+                     style: textTheme.displayLarge?.copyWith(
+                       fontWeight: FontWeight.bold,
+                       fontSize: 16.sp,
+                     ),
+                   ).animate().fadeIn().slideY(begin: -0.2),
+                   
+                  const Spacer(),
+                   
+                   HeroButton(icon: Icons.person, onPressed: (){
+                    ref.read(shellViewProvider.notifier).state = ShellView.settings;
+                   },).animate().fadeIn().slideX(begin: 0.2),
+                 ],
+               ).animate().fadeIn(),
+             ),
           
-
+             SizedBox(
+               height: 5.h,
+             ),
+          
+             
+           Padding(
+             padding: const EdgeInsets.all(20.0),
+             child: Text(
+                        'How May I help you \ntoday,  ADAMS?', 
+                        style: textTheme.displayLarge?.copyWith(fontSize: 30.sp, )
+                      ),
+           ).animate().fadeIn().slideX(begin: 0.3),
+          
+              
+          
+          
           Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-            height: 12.h,
-            width: 50.w,
-            decoration: BoxDecoration(
-              color: Color(0xFFC9A0DC),
-              borderRadius: BorderRadius.circular(25),
-            ),),
-            SizedBox(height: 1.h),
-            Container(
-            height: 12.h,
-            width: 50.w,
-            decoration: BoxDecoration(
+            padding: const EdgeInsets.all(10.0),
+            child: Row (children: [
+              Sectors(icon: Icons.chat,
+              title: 'Chat\n With AI',
+              onPressed: (){},
+              height: 26.h,
+              width: 47.w,
+              color: Color(0xFFADFF2F),
+              size: 35.sp,).animate().fadeIn().slideX(begin: 0.3),
+          
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                     Sectors(icon: Icons.picture_as_pdf_outlined,
+              title: 'Create AI Images',
+              onPressed: (){},
+              height: 13.h,
+              width: 45.w,
+              color: Color(0xFFB284BE),
+              size: 16.sp,).animate().fadeIn().slideX(begin: 0.2),
+                  SizedBox(height: 1.h),
+          
+                  Sectors(icon: Icons.video_call_rounded,
+              title: 'Create AI Videos',
+              onPressed: (){},
+              height: 13.h,
+              width: 45.w,
               color: Color(0xFFF1DDCF),
-              borderRadius: BorderRadius.circular(25),
-            ),),
-              ],
-            ),
-          )
-      ],),
-    ),
-    
-        
-    
-   
-
-        const SizedBox(height: 10),
-     Padding(
-       padding: const EdgeInsets.all(8),
-       child: Column(
-        
-         children: [
-           RowTitle(textTheme: textTheme, title: 'Recenthly Chats'),
-            SizedBox(height: 2.5.h),
-
-            SizedBox(
-                    height: 21.h,
-                    child: ListView.builder(
-              scrollDirection: Axis.vertical,
-              itemCount: ChatList.length,
-              itemBuilder: (context, index) {
-                  return RecentChats(model: ChatList[index]);
-              },
-                    ),
+              size: 16.sp,).animate().fadeIn().slideY(begin: 0.3),
+                 
+                    ],
                   ),
+                )
+            ],),
+          ),
+          
+          const SizedBox(height: 10),
+              
+         
 
-                   GestureDetector(
-                    onTap: () {
-                      ref.read(shellViewProvider.notifier).state = ShellView.chat;
-                    },
-                     child: Container(
-                                     padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 2.5.h),
-                                     decoration: BoxDecoration(
-                                       color: AppColors.light,
-                                       borderRadius: BorderRadius.circular(40),
-                                     ),
-                                     child: Text(
-                                       'Create New Chat',
-                                       style: textTheme.labelMedium?.copyWith(
-                      color: AppColors.dark,
-                      fontWeight: FontWeight.bold,
-                                       ),
-                                     ),
-                                   ),
-                   ),
-           
-         ],
-       ),
-     ),
-    
+        
+         
 
+             
+          
+              const SizedBox(height: 10),
+           RowTitle(textTheme: textTheme, title: 'Popular Prompts'),
+           SizedBox(height: 2.5.h),
+            ListView.builder(
+                               scrollDirection: Axis.vertical,
+                               shrinkWrap: true,
+                               physics: NeverScrollableScrollPhysics(),
+                               itemCount: ChatList.length,
+                               itemBuilder: (context, index) {
+                                   return RecentChats(model: ChatList[index]);
+                               },
+            ),
+          
+          
+          
+            ],
+          ),
+        ),
 
+        Positioned(
+          bottom: 5,
+          right: 10,
+          left: 10,
+          child:  GestureDetector(
+                          onTap: () {
+                            ref.read(shellViewProvider.notifier).state = ShellView.chat;
+                          },
+                           child: Container(
+                                           padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 2.5.h),
+                                           decoration: BoxDecoration(
+                                             color: AppColors.light,
+                                             borderRadius: BorderRadius.circular(40),
+                                           ),
+                                           child: Text(
+                                             'Create New Chat',
+                                             style: textTheme.labelMedium?.copyWith(
+                            color: AppColors.dark,
+                            fontWeight: FontWeight.bold,
+                                             ),
+                                           ),
+                                         ),
+                         ),)
       ],
     );
+
   }
 }
+
+
 
 class RowTitle extends StatelessWidget {
   const RowTitle({
@@ -224,19 +241,26 @@ class RowTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          title,
-          style: textTheme.displayMedium?.copyWith(fontSize: 20.sp)
-        ),
-        
-        const Spacer(),
-        Text(
-          ' See All',
-          style: textTheme.labelMedium
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Text(
+            title,
+            style: textTheme.displayMedium?.copyWith(fontSize: 25.sp, color: Colors.white, )
+          ),
+          
+          const Spacer(),
+          Text(
+            ' See All',
+            style: textTheme.labelMedium?.copyWith(
+              color: AppColors.light.withOpacity(0.7),
+              fontWeight: FontWeight.w500,
+              fontSize: 12.sp,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -251,56 +275,4 @@ class RowTitle extends StatelessWidget {
 
 
 
-class ChatModel {
-  final String msg;
 
-
-  ChatModel({
-    required this.msg,
-  });
-}
-
-
-class RecentChats extends StatelessWidget {
-  const RecentChats({super.key, required this.model});
-
-  final ChatModel model;
-    
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding:  EdgeInsets.only(bottom: 15),
-      child: Container(
-        height: 8.5.h,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: Colors.deepPurple.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(40),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(14.0),
-          child: Row(
-            children: [
-              Icon(
-                Icons.chat_bubble_outline_rounded,
-                color: AppColors.light.withOpacity(0.7),
-                size: 25,
-              ),
-          
-              SizedBox(width: 4.w),
-          
-              Text(
-                model.msg,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: AppColors.light.withOpacity(0.9),
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ).animate().fadeIn().slideY(begin: 0.2);
-  }
-}

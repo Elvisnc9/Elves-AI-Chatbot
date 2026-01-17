@@ -21,7 +21,7 @@ class ChatView extends ConsumerWidget {
               Row(
                 children: [
                   HeroButton(
-                    icon: Icons.arrow_back,
+                    icon: Icons.menu,
                     onPressed: () {
                       ref.read(shellViewProvider.notifier).state =
                           ShellView.home;
@@ -56,7 +56,7 @@ class ChatView extends ConsumerWidget {
                   Spacer(),
 
                   Container(
-                    padding: EdgeInsets.all(1.h),
+                    padding: EdgeInsets.symmetric(horizontal: 2.h, vertical: 1.h),
                     decoration: BoxDecoration(
                       color: Colors.grey.shade900,
                       borderRadius: BorderRadius.circular(30),
@@ -64,16 +64,25 @@ class ChatView extends ConsumerWidget {
                     ),
                     child: Row(
                       children: [
-                        Icon(
-                          Icons.person_2_outlined,
-                          color: AppColors.light,
-                          size: 2.5.h,
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: (){
+                              ref.read(shellViewProvider.notifier).state =
+                          ShellView.settings;
+                            },
+                            child: Icon(
+                              Icons.person_2_outlined,
+                              color: AppColors.light,
+                              size: 2.7.h,
+                            ),
+                          ),
                         ),
-                        SizedBox(width: 4.w),
+                        SizedBox(width: 8.w),
                         Icon(
-                          Icons.settings,
+                          Icons.flash_on,
                           color: AppColors.light,
-                          size: 2.5.h,
+                          size: 2.7.h,
                         ),
                       ],
                     ),
@@ -126,18 +135,18 @@ class ChatView extends ConsumerWidget {
                               border: InputBorder.none,
                             ),
                           ),
-                        ),
+                        ) ,
 
                         SizedBox(width: 2.w),
 
                         /// 🎤 Mic button
                         CircleAvatar(
                           radius: 18,
-                          backgroundColor: AppColors.accent.withOpacity(0.8),
+                          backgroundColor: Colors.transparent,
                           child: Icon(
                             Icons.mic,
                             color: Colors.white,
-                            size: 2.h,
+                            size: 2.5.h,
                           ),
                         ),
                       ],
@@ -146,7 +155,10 @@ class ChatView extends ConsumerWidget {
                 ),
               ],
             ),
-          ),
+          ).animate().fadeIn().flipH(
+        duration: 400.ms,
+        curve: Curves.easeIn,
+      ),
         ],
       ),
     );

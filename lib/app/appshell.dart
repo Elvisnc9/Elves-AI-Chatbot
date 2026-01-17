@@ -22,7 +22,7 @@ class AppShell extends ConsumerWidget {
           child: Stack(
             children: [
               AnimatedSwitcher(
-                duration: 350.ms,
+                duration: 250.ms,
                 child: view == ShellView.home
                     ? const HomeView(key: ValueKey('home'))
                     : view == ShellView.chat

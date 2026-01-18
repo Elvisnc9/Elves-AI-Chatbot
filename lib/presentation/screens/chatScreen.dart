@@ -30,9 +30,10 @@ Widget build(BuildContext context) {
 
   return DrawerScaffold(
     controller: drawerController,
+    backgroundColor: AppColors.dark,
     drawers: [
       SideDrawer(
-        color: AppColors.dark,
+        color: AppColors.light,
         percentage: 0.8, // 👈 how much screen it pushes
         child: Container(   
           color: Colors.transparent,
@@ -56,7 +57,7 @@ Widget build(BuildContext context) {
                     padding: EdgeInsets.symmetric(vertical: 1.h),
                     child: Text(
                       'Previous chat ${i + 1}',
-                      style: const TextStyle(color: Colors.white70),
+                      style: const TextStyle(color: Colors.black),
                     ),
                   ),
                 ),
@@ -125,8 +126,14 @@ Widget build(BuildContext context) {
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.person_3_outlined,
-                              color: AppColors.light, size: 2.7.h),
+                          InkWell(
+                            onTap: (){
+                              ref.read(shellViewProvider.notifier).state =
+                                ShellView.settings;
+                            },
+                            child: Icon(Icons.person_3_outlined,
+                                color: AppColors.light, size: 2.7.h),
+                          ),
                           SizedBox(width: 8.w),
                           Icon(Icons.flash_on,
                               color: AppColors.light, size: 2.7.h),

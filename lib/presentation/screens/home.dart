@@ -94,12 +94,8 @@ class _HomeContentState extends ConsumerState<HomeContent> {
                 child:
                     Row(
                       children: [
-                        HeroButton(
-                          icon: Icons.menu,
-                          onPressed: () {},
-                        ).animate().fadeIn().slideX(begin: -0.2),
-
-                        Spacer(),
+                      
+                      Spacer(),
 
                         Text(
                           'Elves AI',

@@ -26,7 +26,7 @@ class AppShell extends ConsumerWidget {
                 child: view == ShellView.home
                     ? const HomeView(key: ValueKey('home'))
                     : view == ShellView.chat
-                    ? const ChatView(key: ValueKey('chat'))
+                    ?  ChatView(key: ValueKey('chat'))
                     : const Settings(key: ValueKey('settings')),
               ),
             ],

@@ -105,6 +105,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
+  drawerbehavior:
+    dependency: "direct main"
+    description:
+      name: drawerbehavior
+      sha256: ff4740850ab8821c135c6a54b9198fafccb3f6730358bdc188fcf38619841c29
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.4"
   fake_async:
     dependency: transitive
     description:

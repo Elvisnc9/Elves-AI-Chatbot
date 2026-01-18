@@ -38,6 +38,7 @@ dependencies:
   flutter_animate:
   google_fonts:
   the_responsive_builder: 
+  drawerbehavior:
   
 
 dev_dependencies:

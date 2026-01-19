@@ -14,24 +14,26 @@ class AppShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final view = ref.watch(shellViewProvider);
 
-    return Scaffold(
-      backgroundColor: AppColors.dark,
-      resizeToAvoidBottomInset: false,
-      body: SafeArea(
-          child: Stack(
-            children: [
-              AnimatedSwitcher(
-                duration: 250.ms,
-                child: view == ShellView.home
-                    ? const HomeView(key: ValueKey('home'))
-                    : view == ShellView.chat
-                    ?  ChatView(key: ValueKey('chat'))
-                    : const Settings(key: ValueKey('settings')),
-              ),
-            ],
+    return GestureDetector(
+      child: Scaffold(
+        backgroundColor: AppColors.dark,
+        resizeToAvoidBottomInset: false,
+        body: SafeArea(
+            child: Stack(
+              children: [
+                AnimatedSwitcher(
+                  duration: 250.ms,
+                  child: view == ShellView.home
+                      ? const HomeView(key: ValueKey('home'))
+                      : view == ShellView.chat
+                      ?  ChatView(key: ValueKey('chat'))
+                      : const Settings(key: ValueKey('settings')),
+                ),
+              ],
+            ),
           ),
-        ),
-      
+        
+      ),
     );
   }
 }

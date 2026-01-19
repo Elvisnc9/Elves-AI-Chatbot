@@ -7,6 +7,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:the_responsive_builder/the_responsive_builder.dart';
 
+
+
 class ChatView extends ConsumerStatefulWidget {
   const ChatView({super.key});
 
@@ -33,7 +35,9 @@ class _ChatViewState extends ConsumerState<ChatView> {
       drawers: [
         SideDrawer(
           color: AppColors.accent,
-          percentage: 0.85,
+          percentage: 0.95,
+          degree: 15,
+          drawerWidth: 250,
           slide: true,
           alignment: Alignment.topLeft,
           headerView: SearchBox(),
@@ -44,79 +48,89 @@ class _ChatViewState extends ConsumerState<ChatView> {
 
       /// 🚀 THIS IS YOUR MAIN UI (UNCHANGED)
       builder: (context, id) {
-        return Padding(
-          padding: const EdgeInsets.all(2),
-          child: Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      /// ☰ MENU (OPENS DRAWER)
-                      IconButton(
-                        onPressed: () {
-                          drawerController.openDrawer();
-                        },
-                        icon: const Icon(Icons.menu),
-                      ),
+        return GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTapDown: (_) {
+            
+            FocusManager.instance.primaryFocus?.unfocus();
+            drawerController.closeDrawer();
+          },
 
-                      SizedBox(width: 5.w),
-
-                      Material(
-                        child: InkWell(
-                          onTap: () {
-                            ref.read(shellViewProvider.notifier).state =
-                                ShellView.home;
+          child: Padding(
+            padding: const EdgeInsets.all(2),
+            child: Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        /// ☰ MENU (OPENS DRAWER)
+                        IconButton(
+                          onPressed: () {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            drawerController.openDrawer();
                           },
-                          child: Container(
-                            padding: EdgeInsets.all(1.h),
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade900,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.star,
-                                  color: Colors.yellow,
-                                  size: 2.h,
-                                ),
-                                SizedBox(width: 1.w),
-                                Text(
-                                  'Upgrade',
-                                  style: textTheme.displayLarge?.copyWith(
-                                    fontWeight: FontWeight.bold,
+                          icon: const Icon(Icons.menu),
+                        ),
+          
+                        SizedBox(width: 5.w),
+          
+                        Material(
+                          child: GestureDetector(
+                            onTap: () {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                           
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(1.h),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade900,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.star,
                                     color: Colors.yellow,
-                                    fontSize: 12.sp,
+                                    size: 2.h,
                                   ),
-                                ),
-                              ],
+                                  SizedBox(width: 1.w),
+                                  Text(
+                                    'Upgrade',
+                                    style: textTheme.displayLarge?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.yellow,
+                                      fontSize: 12.sp,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-
-                      const Spacer(),
-                    ],
-                  ),
-
-                  
-                ],
-              ),
-
-
-
-
-
-              Positioned(
-                bottom: 10,
-                left: 12,
-                right: 12,
-                child: ChatInputField())
-
-              
-            ],
+          
+                        const Spacer(),
+                      ],
+                    ),
+          
+                    
+                  ],
+                ),
+          
+          
+          
+          
+          
+                Positioned(
+                  bottom: 10,
+                  left: 12,
+                  right: 12,
+                  child: ChatInputField())
+          
+                
+              ],
+            ),
           ),
         );
       },
@@ -152,11 +166,12 @@ class SearchBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final  textTheme = Theme.of(context).textTheme;
     return Padding(
-      padding: EdgeInsets.only(top: 1.5.h, left: 1.h, right: 6.h),
+      padding: EdgeInsets.only(top: 1.5.h, left: 1.h, right: 2.h),
       child: Container(
         height: 45,
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10,),
         decoration: BoxDecoration(
           color: Colors.grey.shade900,
           borderRadius: BorderRadius.circular(40),
@@ -168,11 +183,12 @@ class SearchBox extends StatelessWidget {
             SizedBox(width: 5.w),
             Expanded(
               child: TextField(
-                
+    
                 keyboardType: TextInputType.multiline,
                 textInputAction: TextInputAction.newline,
                  maxLines: null,
                 minLines: 1,
+                style: textTheme.labelMedium,
                 decoration: InputDecoration(
                   hintText: 'Search...',
                   hintStyle: TextStyle(

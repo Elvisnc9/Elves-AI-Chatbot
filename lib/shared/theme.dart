@@ -6,7 +6,8 @@ class AppTheme {
   static ThemeData get darkTheme {
     return ThemeData(
       brightness: Brightness.dark,
-      scaffoldBackgroundColor: AppColors.primary,
+      scaffoldBackgroundColor: AppColors.light,
+    
         textTheme: TextTheme(
     displayLarge: GoogleFonts.plusJakartaSans(
       fontSize: 24.sp,

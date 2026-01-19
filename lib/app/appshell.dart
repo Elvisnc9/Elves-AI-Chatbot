@@ -16,9 +16,8 @@ class AppShell extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.dark,
-      body: Container(
-        
-        child: SafeArea(
+      resizeToAvoidBottomInset: false,
+      body: SafeArea(
           child: Stack(
             children: [
               AnimatedSwitcher(
@@ -32,7 +31,7 @@ class AppShell extends ConsumerWidget {
             ],
           ),
         ),
-      ),
+      
     );
   }
 }

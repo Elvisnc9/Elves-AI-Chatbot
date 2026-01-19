@@ -17,6 +17,7 @@ class ElvesDrawer extends StatelessWidget {
       color: Colors.transparent,
       padding: EdgeInsets.symmetric( vertical: 1.h),
       child:  SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

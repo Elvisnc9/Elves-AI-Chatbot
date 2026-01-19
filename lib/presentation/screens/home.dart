@@ -94,7 +94,12 @@ class _HomeContentState extends ConsumerState<HomeContent> {
                 child:
                     Row(
                       children: [
-                      
+                       HeroButton(
+            icon: Icons.arrow_back,
+            onPressed: () {
+              ref.read(shellViewProvider.notifier).state = ShellView.onboarding;
+            },
+          ),
                       Spacer(),
 
                         Text(
@@ -134,15 +139,15 @@ class _HomeContentState extends ConsumerState<HomeContent> {
                   children: [
                     Sectors(
                       icon: Icons.chat,
-                      textColor: AppColors.light,
+                      textColor: AppColors.dark,
                       title: 'Chat\n With AI',
                       onPressed: () {},
                       height: 26.h,
                       width: 47.w,
-                      color: AppColors.accent,
+                      color: Color(0xFFADFF2F),
                       
                       size: 35.sp,
-                    ).animate().fadeIn().slideX(begin: 0.3),
+                    ).animate().fadeIn().slideX(begin: -0.3 ,delay: 200.ms ),
 
                     Padding(
                       padding: const EdgeInsets.all(4.0),
@@ -155,9 +160,10 @@ class _HomeContentState extends ConsumerState<HomeContent> {
                             onPressed: () {},
                             height: 13.h,
                             width: 45.w,
-                            color: Color(0xFFADFF2F),
+                             textColor: AppColors.light,
+                            color: AppColors.primary,
                             size: 16.sp,
-                          ).animate().fadeIn().slideX(begin: 0.2),
+                          ).animate().fadeIn().slideY(begin: -0.3, delay: 200.ms),
                           SizedBox(height: 1.h),
 
                           Sectors(
@@ -168,7 +174,7 @@ class _HomeContentState extends ConsumerState<HomeContent> {
                             width: 45.w,
                             color: Color(0xFFF1DDCF),
                             size: 16.sp,
-                          ).animate().fadeIn().slideY(begin: 0.3),
+                          ).animate().fadeIn().slideY(begin: 0.3, delay: 200.ms),
                         ],
                       ),
                     ),

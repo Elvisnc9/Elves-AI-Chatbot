@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/legacy.dart';
 
-enum ShellView { home, chat, settings }
+enum ShellView {onboarding, home, chat, settings }
 
 final shellViewProvider =
-    StateProvider<ShellView>((ref) => ShellView.home);
+    StateProvider<ShellView>((ref) => ShellView.onboarding);
 
 
 enum ViewStatus { skeleton, content }

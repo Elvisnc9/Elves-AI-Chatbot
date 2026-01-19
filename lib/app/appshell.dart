@@ -1,5 +1,6 @@
 import 'package:elves_chatbot/presentation/screens/chatScreen.dart';
 import 'package:elves_chatbot/presentation/screens/home.dart';
+import 'package:elves_chatbot/presentation/screens/onboarding.dart';
 import 'package:elves_chatbot/presentation/screens/settings.dart';
 import 'package:elves_chatbot/shared/theme.dart';
 import 'package:elves_chatbot/state/shellView.dart';
@@ -22,13 +23,15 @@ class AppShell extends ConsumerWidget {
             child: Stack(
               children: [
                 AnimatedSwitcher(
-                  duration: 250.ms,
-                  child: view == ShellView.home
-                      ? const HomeView(key: ValueKey('home'))
-                      : view == ShellView.chat
-                      ?  ChatView(key: ValueKey('chat'))
-                      : const Settings(key: ValueKey('settings')),
-                ),
+                     duration: 250.ms,
+                  child: view == ShellView.onboarding
+                    ?  OnboardingScreen(key: ValueKey('onboarding'))
+                    : view == ShellView.home
+                    ? const HomeView(key: ValueKey('home'))
+                    : view == ShellView.chat
+                    ? const ChatView(key: ValueKey('chat'))
+                    : const Settings(key: ValueKey('settings')),
+              ),
               ],
             ),
           ),

@@ -7,8 +7,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:the_responsive_builder/the_responsive_builder.dart';
 
-
-
 class ChatView extends ConsumerStatefulWidget {
   const ChatView({super.key});
 
@@ -34,7 +32,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
       backgroundColor: AppColors.dark,
       drawers: [
         SideDrawer(
-          color: AppColors.accent,
+          color: Colors.grey.shade900,
           percentage: 0.95,
           degree: 15,
           drawerWidth: 250,
@@ -51,7 +49,6 @@ class _ChatViewState extends ConsumerState<ChatView> {
         return GestureDetector(
           behavior: HitTestBehavior.translucent,
           onTapDown: (_) {
-            
             FocusManager.instance.primaryFocus?.unfocus();
             drawerController.closeDrawer();
           },
@@ -73,14 +70,16 @@ class _ChatViewState extends ConsumerState<ChatView> {
                           },
                           icon: const Icon(Icons.menu),
                         ),
-          
+
                         SizedBox(width: 5.w),
-          
+
                         Material(
                           child: GestureDetector(
                             onTap: () {
                               FocusManager.instance.primaryFocus?.unfocus();
-                           
+                             
+              ref.read(shellViewProvider.notifier).state = ShellView.home;
+            
                             },
                             child: Container(
                               padding: EdgeInsets.all(1.h),
@@ -109,26 +108,19 @@ class _ChatViewState extends ConsumerState<ChatView> {
                             ),
                           ),
                         ),
-          
+
                         const Spacer(),
                       ],
                     ),
-          
-                    
                   ],
                 ),
-          
-          
-          
-          
-          
+
                 Positioned(
                   bottom: 10,
                   left: 12,
                   right: 12,
-                  child: ChatInputField())
-          
-                
+                  child: ChatInputField(),
+                ),
               ],
             ),
           ),
@@ -166,14 +158,14 @@ class SearchBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final  textTheme = Theme.of(context).textTheme;
+    final textTheme = Theme.of(context).textTheme;
     return Padding(
       padding: EdgeInsets.only(top: 1.5.h, left: 1.h, right: 2.h),
       child: Container(
         height: 45,
-        padding: const EdgeInsets.symmetric(horizontal: 10,),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
-          color: Colors.grey.shade900,
+          color: AppColors.dark,
           borderRadius: BorderRadius.circular(40),
         ),
         child: Row(
@@ -183,10 +175,9 @@ class SearchBox extends StatelessWidget {
             SizedBox(width: 5.w),
             Expanded(
               child: TextField(
-    
                 keyboardType: TextInputType.multiline,
                 textInputAction: TextInputAction.newline,
-                 maxLines: null,
+                maxLines: null,
                 minLines: 1,
                 style: textTheme.labelMedium,
                 decoration: InputDecoration(
@@ -206,8 +197,6 @@ class SearchBox extends StatelessWidget {
     );
   }
 }
-
-
 
 class ChatInputField extends StatefulWidget {
   const ChatInputField({super.key});
@@ -247,21 +236,16 @@ class _ChatInputFieldState extends State<ChatInputField>
     final texttheme = Theme.of(context).textTheme;
     return Row(
       children: [
+        Container(
+          padding: EdgeInsets.all(2.h),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade900,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(Icons.add, color: AppColors.light, size: 2.5.h),
+        ),
 
-         Container(
-                      padding: EdgeInsets.all(2.h),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade900,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.add,
-                        color: AppColors.light,
-                        size: 2.5.h,
-                      ),
-                    ),
-
-                    SizedBox(width: 1.w,),
+        SizedBox(width: 1.w),
         Expanded(
           child: AnimatedSize(
             duration: const Duration(milliseconds: 200),
@@ -275,7 +259,6 @@ class _ChatInputFieldState extends State<ChatInputField>
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-          
                   /// TEXT INPUT
                   Expanded(
                     child: ConstrainedBox(
@@ -287,7 +270,8 @@ class _ChatInputFieldState extends State<ChatInputField>
                         child: TextField(
                           controller: _controller,
                           keyboardType: TextInputType.multiline,
-                          textInputAction: TextInputAction.newline, // Enter = newline
+                          textInputAction:
+                              TextInputAction.newline, // Enter = newline
                           maxLines: null,
                           minLines: 1,
                           onChanged: (_) => _autoScroll(),
@@ -306,47 +290,38 @@ class _ChatInputFieldState extends State<ChatInputField>
                       ),
                     ),
                   ),
-          
-          
-                  
-          
+
                   SizedBox(width: 2.w),
-          
+
                   /// SEND BUTTON
                   GestureDetector(
                     onTap: _sendMessage,
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white,
-                      ),
-                      child: const Icon(
-                        Icons.send,
-                        size: 18,
-                        color: Colors.black,
-                      ),
-                    )
-                        .animate() // ✨ Flutter Animate
-                        .scale(duration: 150.ms)
-                        .fadeIn(),
+                    child:
+                        Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                              ),
+                              child: const Icon(
+                                Icons.send,
+                                size: 18,
+                                color: Colors.black,
+                              ),
+                            )
+                            .animate() // ✨ Flutter Animate
+                            .scale(duration: 150.ms)
+                            .fadeIn(),
                   ),
                 ],
               ),
-            )
-                .animate()
-                .fadeIn(duration: 250.ms)
-                .slideY(begin: 0.2),
+            ).animate().fadeIn(duration: 250.ms).slideY(begin: 0.2),
           ),
         ),
       ],
     );
   }
 }
-
-
-
-
 
 class DrawerFooter extends ConsumerWidget {
   const DrawerFooter({super.key});
@@ -369,7 +344,8 @@ class DrawerFooter extends ConsumerWidget {
               children: [
                 CircleAvatar(
                   backgroundColor: AppColors.dark,
-                  child: Icon(Icons.person_3_outlined)),
+                  child: Icon(Icons.person_3_outlined),
+                ),
 
                 SizedBox(width: 3.h),
 

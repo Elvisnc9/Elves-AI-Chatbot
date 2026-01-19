@@ -1,15 +1,19 @@
+import 'package:elves_chatbot/shared/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:the_responsive_builder/the_responsive_builder.dart';
 
 class Sectors extends StatelessWidget {
-  const Sectors({
+   Sectors(
+    {
     super.key, 
     required this.icon, 
     required this.title,
      required this.onPressed, 
      required this.height,
       required this.width, 
-      required this.color, required this.size,
+      required this.color, 
+      required this.size,
+       this.textColor = AppColors.dark
   });
 
   final Color color;
@@ -19,6 +23,7 @@ class Sectors extends StatelessWidget {
   final String title;
   final VoidCallback onPressed;
   final double size;
+  final Color textColor ;
 
   @override
   Widget build(BuildContext context) {
@@ -42,11 +47,11 @@ class Sectors extends StatelessWidget {
                     CircleAvatar(
                       radius: 18,
                       backgroundColor: Colors.black.withOpacity(0.2),
-                      child: Icon(icon, color: Colors.black, size: 20)),
+                      child: Icon(icon, color: textColor, size: 20)),
                       
         
                       Spacer(),
-                      Icon(Icons.arrow_outward, color: Colors.black, size: 20)
+                      Icon(Icons.arrow_outward, color: textColor, size: 20)
                   ],
                 ),
         
@@ -56,7 +61,7 @@ class Sectors extends StatelessWidget {
                   title,
                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
                     fontSize: size,
-                    color: Colors.black,
+                    color: textColor,
                     fontWeight: FontWeight.w300,
                     height: 1.1
                   ),

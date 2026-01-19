@@ -129,16 +129,18 @@ class _HomeContentState extends ConsumerState<HomeContent> {
               ).animate().fadeIn().slideX(begin: 0.3),
 
               Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
                     Sectors(
                       icon: Icons.chat,
+                      textColor: AppColors.light,
                       title: 'Chat\n With AI',
                       onPressed: () {},
                       height: 26.h,
                       width: 47.w,
-                      color: Color(0xFFADFF2F),
+                      color: AppColors.accent,
+                      
                       size: 35.sp,
                     ).animate().fadeIn().slideX(begin: 0.3),
 
@@ -148,12 +150,12 @@ class _HomeContentState extends ConsumerState<HomeContent> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Sectors(
-                            icon: Icons.picture_as_pdf_outlined,
+                            icon: Icons.image,
                             title: 'Create AI Images',
                             onPressed: () {},
                             height: 13.h,
                             width: 45.w,
-                            color: Color(0xFFB284BE),
+                            color: Color(0xFFADFF2F),
                             size: 16.sp,
                           ).animate().fadeIn().slideX(begin: 0.2),
                           SizedBox(height: 1.h),

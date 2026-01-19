@@ -145,27 +145,11 @@ class _SettingsContentState extends ConsumerState<Settings> {
 
           child: Column(
             children: [
-              _navigationTile(
-                icon: Icons.tune,
-                text: 'Customize Genie',
-                onTap: () {},
-              ),
-              _navigationTile(
-                icon: Icons.storage,
-                text: 'Data Controls',
-                onTap: () {},
-              ),
-              _navigationTile(
-                icon: Icons.privacy_tip_outlined,
-                text: 'Privacy Policy',
-                onTap: () {},
-              ),
+              NavigationTile( icon: Icons.tune, text: 'Customize Genie', onTap: () {}),
+              NavigationTile( icon: Icons.storage, text: 'Data Controls', onTap: () {}),
+              NavigationTile( icon: Icons.privacy_tip_outlined, text: 'Privacy Policy', onTap: () {}),
               
-              _navigationTile(
-                icon: Icons.report_problem_outlined,
-                text: 'Report Issue',
-                onTap: () {},
-              ),
+              NavigationTile( icon: Icons.report_problem_outlined, text: 'Report Issue', onTap: () {}),
             ],
           ),
         ).animate().fadeIn().slideY(begin: 0.3),
@@ -304,24 +288,6 @@ class _SettingsContentState extends ConsumerState<Settings> {
     );
   }
 
-  Widget _navigationTile({
-    required IconData icon,
-    required String text,
-    VoidCallback? onTap,
-  }) {
-    final Texttheme = Theme.of(context).textTheme;
-    return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 0.2.h, vertical: 0.7.h),
-      leading: Icon(icon, color: Colors.white),
-      title: Text(
-        text,
-        style: Texttheme.labelMedium?.copyWith(color: Colors.white),
-      ),
-      trailing: Icon(Icons.chevron_right, color: Colors.white),
-      onTap: onTap,
-    );
-  }
-
 
 
 
@@ -383,6 +349,35 @@ class _SettingsContentState extends ConsumerState<Settings> {
         style: Texttheme.labelMedium?.copyWith(color: Colors.white),
       ),
       onTap: () {},
+    );
+  }
+}
+
+class NavigationTile extends StatelessWidget {
+  const NavigationTile({
+    super.key,
+
+    required this.icon,
+    required this.text,
+    required this.onTap,
+  });
+
+ 
+  final IconData icon;
+  final String text;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final Texttheme = Theme.of(context).textTheme;
+    return ListTile(
+      contentPadding: EdgeInsets.symmetric(horizontal: 0.2.h, vertical: 0.7.h),
+      leading: Icon(icon, color: Colors.white),
+      title: Text(
+        text,
+        style: Texttheme.labelMedium?.copyWith(color: Colors.white),
+      ),
+      onTap: onTap,
     );
   }
 }

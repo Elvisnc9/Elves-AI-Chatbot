@@ -1,12 +1,9 @@
 import 'package:drawerbehavior/drawerbehavior.dart';
+import 'package:elves_chatbot/presentation/screens/elvesDrawer.dart';
 import 'package:elves_chatbot/shared/theme.dart';
-import 'package:elves_chatbot/state/shellView.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:the_responsive_builder/the_responsive_builder.dart';
-
 
 
 class ChatView extends ConsumerStatefulWidget {
@@ -33,40 +30,16 @@ Widget build(BuildContext context) {
     backgroundColor: AppColors.dark,
     drawers: [
       SideDrawer(
-        color: AppColors.light,
-        percentage: 0.8, // 👈 how much screen it pushes
-        child: Container(   
-          color: Colors.transparent,
-          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 6.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Chats',
-                style: textTheme.headlineSmall?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 3.h),
-              SizedBox(
-                 height: MediaQuery.of(context).size.height * 0.7,
-                child: ListView.builder(
-                  itemCount: 20,
-                  itemBuilder: (_, i) => Padding(
-                    padding: EdgeInsets.symmetric(vertical: 1.h),
-                    child: Text(
-                      'Previous chat ${i + 1}',
-                      style: const TextStyle(color: Colors.black),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        color: AppColors.accent,
+      percentage: 0.85, 
+      slide: true,
+      alignment: Alignment.topLeft,
+      headerView: SearchBox(),
+      footerView: DrawerFooter(),
+        child: ElvesDrawer(),
       ),
     ],
+    
   
     /// 🚀 THIS IS YOUR MAIN UI (UNCHANGED)
     builder: (context, id) {
@@ -111,35 +84,11 @@ Widget build(BuildContext context) {
                           ),
                         ],
                       ),
-                    ),
+                    ), 
   
                     const Spacer(),
   
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 1.2.h, vertical: 0.7.h),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade900,
-                        borderRadius: BorderRadius.circular(30),
-                        border:
-                            Border.all(color: AppColors.light, width: 0.9),
-                      ),
-                      child: Row(
-                        children: [
-                          InkWell(
-                            onTap: (){
-                              ref.read(shellViewProvider.notifier).state =
-                                ShellView.settings;
-                            },
-                            child: Icon(Icons.person_3_outlined,
-                                color: AppColors.light, size: 2.7.h),
-                          ),
-                          SizedBox(width: 8.w),
-                          Icon(Icons.flash_on,
-                              color: AppColors.light, size: 2.7.h),
-                        ],
-                      ),
-                    ),
+                  
                   ],
                 ),
               ],
@@ -153,12 +102,10 @@ Widget build(BuildContext context) {
               child: Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(1.h),
+                    padding: EdgeInsets.all(2.h),
                     decoration: BoxDecoration(
                       color: Colors.grey.shade900,
                       shape: BoxShape.circle,
-                      border:
-                          Border.all(color: AppColors.light, width: 0.9),
                     ),
                     child: Icon(Icons.add,
                         color: AppColors.light, size: 2.5.h),
@@ -172,8 +119,6 @@ Widget build(BuildContext context) {
                       decoration: BoxDecoration(
                         color: Colors.grey.shade900,
                         borderRadius: BorderRadius.circular(30),
-                        border:
-                            Border.all(color: AppColors.light, width: 0.9),
                       ),
                       child: Row(
                         children: [
@@ -205,6 +150,8 @@ Widget build(BuildContext context) {
   );
 }}
 
+
+
 class HeroButton extends StatelessWidget {
   const HeroButton({super.key, required this.icon, required this.onPressed});
 
@@ -230,34 +177,41 @@ class HeroButton extends StatelessWidget {
 
 
 
-class _DrawerItem extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback onTap;
 
-  const _DrawerItem({
-    required this.icon,
-    required this.title,
-    required this.onTap,
-  });
+
+class SearchBox extends StatelessWidget {
+  const SearchBox({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 1.5.h),
-      child: InkWell(
-        onTap: onTap,
+      padding: EdgeInsets.only(top: 1.5.h, left: 1.h, right: 6.h),
+      child: Container(
+        height: 45,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade900,
+          borderRadius: BorderRadius.circular(40),
+         
+        ),
         child: Row(
           children: [
-            Icon(icon, color: Colors.white),
-            SizedBox(width: 4.w),
-            Text(
-              title,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 1.8.h,
+             Icon(
+              Icons.search,
+              color: AppColors.light,
+            ),
+            
+            SizedBox(width: 5.w,),
+            Expanded(
+              child: TextField(
+                decoration:  InputDecoration(
+                  hintText: 'Search...',
+                  hintStyle: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold, color: AppColors.light),
+                  border: InputBorder.none,
+                ),
               ),
             ),
+           
           ],
         ),
       ),
@@ -266,70 +220,25 @@ class _DrawerItem extends StatelessWidget {
 }
 
 
-class ShellDrawer extends ConsumerWidget {
- ShellDrawer({super.key});
-final drawerOpenProvider = StateProvider<bool>((ref) => false);
+class DrawerFooter extends StatelessWidget {
+  const DrawerFooter({super.key});
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Align(
-      alignment: Alignment.centerLeft,
+  Widget build(BuildContext context) {
+    final texttheme = Theme.of(context).textTheme;
+    return  Padding(
+      padding: EdgeInsets.all(1.5.h),
       child: Container(
-        width: 70.w,
-        height: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 6.h),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade900,
-          borderRadius: const BorderRadius.only(
-            topRight: Radius.circular(30),
-            bottomRight: Radius.circular(30),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        color: Colors.transparent,
+        child: Row(
           children: [
-            Text(
-              'Elves',
-              style: textTheme.headlineSmall?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+            CircleAvatar(
+              child: Icon(Icons.person_3_outlined),
             ),
-
-            SizedBox(height: 4.h),
-
-            _DrawerItem(
-              icon: Icons.home,
-              title: 'Home',
-              onTap: () {
-                ref.read(shellViewProvider.notifier).state = ShellView.home;
-                ref.read(drawerOpenProvider.notifier).state = false;
-              },
-            ),
-
-            _DrawerItem(
-              icon: Icons.settings,
-              title: 'Settings',
-              onTap: () {
-                ref.read(shellViewProvider.notifier).state = ShellView.settings;
-                ref.read(drawerOpenProvider.notifier).state = false;
-              },
-            ),
-
-            _DrawerItem(
-              icon: Icons.star,
-              title: 'Upgrade',
-              onTap: () {},
-            ),
-
-            const Spacer(),
-
-            _DrawerItem(
-              icon: Icons.logout,
-              title: 'Logout',
-              onTap: () {},
-            ),
+                
+            SizedBox(width: 3.h,),
+        
+            Text('Ngwu Elvis', style: texttheme.labelMedium,)
           ],
         ),
       ),

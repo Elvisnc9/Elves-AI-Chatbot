@@ -1,0 +1,6 @@
+googleIdp:
+  - login:
+jwtRefresh:
+  - refreshAccessToken:
+greeting:
+  - hello:

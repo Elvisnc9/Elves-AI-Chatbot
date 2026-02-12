@@ -11,37 +11,68 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../endpoints/googleIdbaseEndpoint.dart' as _i2;
-import '../endpoints/jwt_refresh_endpoint.dart' as _i3;
-import '../greetings/greeting_endpoint.dart' as _i4;
+import '../endpoints/chatEndpoint.dart' as _i2;
+import '../endpoints/googleIdbaseEndpoint.dart' as _i3;
+import '../endpoints/jwt_refresh_endpoint.dart' as _i4;
+import '../greetings/greeting_endpoint.dart' as _i5;
 import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
-    as _i5;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _i6;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+    as _i7;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
   void initializeEndpoints(_i1.Server server) {
     var endpoints = <String, _i1.Endpoint>{
-      'googleIdp': _i2.GoogleIdpEndpoint()
+      'chat': _i2.ChatEndpoint()
+        ..initialize(
+          server,
+          'chat',
+          null,
+        ),
+      'googleIdp': _i3.GoogleIdpEndpoint()
         ..initialize(
           server,
           'googleIdp',
           null,
         ),
-      'jwtRefresh': _i3.JwtRefreshEndpoint()
+      'jwtRefresh': _i4.JwtRefreshEndpoint()
         ..initialize(
           server,
           'jwtRefresh',
           null,
         ),
-      'greeting': _i4.GreetingEndpoint()
+      'greeting': _i5.GreetingEndpoint()
         ..initialize(
           server,
           'greeting',
           null,
         ),
     };
+    connectors['chat'] = _i1.EndpointConnector(
+      name: 'chat',
+      endpoint: endpoints['chat']!,
+      methodConnectors: {
+        'sendMessage': _i1.MethodConnector(
+          name: 'sendMessage',
+          params: {
+            'message': _i1.ParameterDescription(
+              name: 'message',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['chat'] as _i2.ChatEndpoint).sendMessage(
+                session,
+                params['message'],
+              ),
+        ),
+      },
+    );
     connectors['googleIdp'] = _i1.EndpointConnector(
       name: 'googleIdp',
       endpoint: endpoints['googleIdp']!,
@@ -65,7 +96,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async =>
-                  (endpoints['googleIdp'] as _i2.GoogleIdpEndpoint).login(
+                  (endpoints['googleIdp'] as _i3.GoogleIdpEndpoint).login(
                     session,
                     idToken: params['idToken'],
                     accessToken: params['accessToken'],
@@ -90,7 +121,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['jwtRefresh'] as _i3.JwtRefreshEndpoint)
+              ) async => (endpoints['jwtRefresh'] as _i4.JwtRefreshEndpoint)
                   .refreshAccessToken(
                     session,
                     refreshToken: params['refreshToken'],
@@ -115,16 +146,16 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greeting'] as _i4.GreetingEndpoint).hello(
+              ) async => (endpoints['greeting'] as _i5.GreetingEndpoint).hello(
                 session,
                 params['name'],
               ),
         ),
       },
     );
-    modules['serverpod_auth_idp'] = _i5.Endpoints()
+    modules['serverpod_auth_idp'] = _i6.Endpoints()
       ..initializeEndpoints(server);
-    modules['serverpod_auth_core'] = _i6.Endpoints()
+    modules['serverpod_auth_core'] = _i7.Endpoints()
       ..initializeEndpoints(server);
   }
 }

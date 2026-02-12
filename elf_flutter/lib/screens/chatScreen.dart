@@ -1,6 +1,7 @@
 import 'package:drawerbehavior/drawerbehavior.dart';
 import 'package:elf_flutter/screens/elvesDrawer.dart';
 import 'package:elf_flutter/shared/theme.dart';
+import 'package:elf_flutter/state/chatState.dart';
 import 'package:elf_flutter/state/shellView.dart';
 import 'package:elf_flutter/widgets/ChatScreem/DrawerSearchBar.dart';
 
@@ -20,39 +21,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
   late final DrawerScaffoldController drawerController;
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
-  final List<ChatMessage> _messages = [];
   final FocusNode _focusNode = FocusNode();
-
-  void _autoScroll() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 150),
-          curve: Curves.easeOut,
-        );
-      }
-    });
-  }
-
-  void _sendMessage(String text) {
-    if (text.trim().isEmpty) return;
-
-    final message = ChatMessage(
-      text: text,
-      isMe: true,
-    );
-
-    _messages.insert(0, message);
-
-    _listKey.currentState?.insertItem(
-      0,
-      duration: const Duration(milliseconds: 280),
-    );
-  }
-
-  TextTheme get textTheme => Theme.of(context).textTheme;
 
   @override
   void initState() {
@@ -60,10 +29,25 @@ class _ChatViewState extends ConsumerState<ChatView> {
     drawerController = DrawerScaffoldController();
   }
 
+  /// Scroll to newest message
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          0, // reverse: true → top = newest
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  TextTheme get textTheme => Theme.of(context).textTheme;
+
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
     final theme = Theme.of(context);
+
     return DrawerScaffold(
       controller: drawerController,
       drawers: [
@@ -80,8 +64,6 @@ class _ChatViewState extends ConsumerState<ChatView> {
           child: ElvesDrawer(),
         ),
       ],
-
-      /// 🚀 THIS IS YOUR MAIN UI (UNCHANGED)
       builder: (context, id) {
         return GestureDetector(
           behavior: HitTestBehavior.translucent,
@@ -89,7 +71,6 @@ class _ChatViewState extends ConsumerState<ChatView> {
             FocusManager.instance.primaryFocus?.unfocus();
             drawerController.closeDrawer();
           },
-
           child: Padding(
             padding: const EdgeInsets.all(2),
             child: Stack(
@@ -107,23 +88,20 @@ class _ChatViewState extends ConsumerState<ChatView> {
                           },
                           icon: const Icon(Icons.menu),
                         ),
-
                         SizedBox(width: 5.w),
-
                         Material(
-                          
                           type: MaterialType.transparency,
                           child: GestureDetector(
                             onTap: () {
                               FocusManager.instance.primaryFocus?.unfocus();
-
                               ref.read(shellViewProvider.notifier).state =
                                   ShellView.home;
                             },
                             child: Container(
                               padding: EdgeInsets.all(1.h),
                               decoration: BoxDecoration(
-                                color: theme.scaffoldBackgroundColor.withOpacity(0.4),
+                                color:
+                                    theme.scaffoldBackgroundColor.withOpacity(0.4),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Row(
@@ -138,7 +116,6 @@ class _ChatViewState extends ConsumerState<ChatView> {
                                     'Upgrade',
                                     style: textTheme.displayLarge?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                    
                                       fontSize: 12.sp,
                                     ),
                                   ),
@@ -152,11 +129,63 @@ class _ChatViewState extends ConsumerState<ChatView> {
                   ],
                 ),
 
+                /// Chat List
                 Positioned.fill(
-                  top: 60, // below header
-                  child: _chatList(),
+                  top: 60,
+                  child: Consumer(
+                    builder: (context, ref, _) {
+                      final chatState = ref.watch(chatProvider);
+                      final messages = chatState.messages;
+                      final isLoading = chatState.isLoading;
+
+                      // Auto-scroll whenever messages change
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        _scrollToBottom();
+                      });
+
+                      return ListView.builder(
+                        controller: _scrollController,
+                        reverse: true,
+                        padding: EdgeInsets.only(
+                          top: 80,
+                          bottom: MediaQuery.of(context).viewInsets.bottom + 90,
+                          left: 12,
+                          right: 12,
+                        ),
+                        itemCount: messages.length,
+                        itemBuilder: (context, index) {
+                          final message = messages[index];
+                          return _chatBubble(message);
+                        },
+                      );
+                    },
+                  ),
                 ),
 
+                /// Loading indicator
+                Consumer(
+                  builder: (context, ref, _) {
+                    final isLoading = ref.watch(chatProvider).isLoading;
+                    if (!isLoading) return const SizedBox.shrink();
+                    return Positioned(
+                      bottom: 90,
+                      left: 20,
+                      child: Row(
+                        children: [
+                          const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                          const SizedBox(width: 10),
+                          Text("Elves is typing...", style: textTheme.labelMedium),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+
+                /// Input field + send button
                 Positioned(
                   bottom: 10,
                   left: 12,
@@ -175,97 +204,85 @@ class _ChatViewState extends ConsumerState<ChatView> {
                           size: 2.5.h,
                         ),
                       ),
-
                       SizedBox(width: 1.w),
                       Expanded(
                         child: AnimatedSize(
                           duration: const Duration(milliseconds: 200),
                           curve: Curves.easeOut,
-                          child:
-                              Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 2.h,
-                                      vertical: 1.5.h,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 2.h,
+                              vertical: 1.5.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: theme.canvasColor,
+                              borderRadius: BorderRadius.circular(40),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                /// TEXT INPUT
+                                Expanded(
+                                  child: TextField(
+                                    controller: _textController,
+                                    focusNode: _focusNode,
+                                    keyboardType: TextInputType.multiline,
+                                    textInputAction: TextInputAction.newline,
+                                    maxLines: null,
+                                    minLines: 1,
+                                    style: textTheme.labelMedium,
+                                    decoration: InputDecoration(
+                                      hintText: 'Ask Elves Anything...',
+                                      hintStyle: TextStyle(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.bold,
+                                        color: theme.cardColor,
+                                      ),
+                                      border: InputBorder.none,
+                                      isDense: true,
                                     ),
+                                  ),
+                                ),
+
+                                SizedBox(width: 2.w),
+
+                                /// SEND BUTTON
+                                GestureDetector(
+                                  onTap: () async {
+                                    final text = _textController.text.trim();
+                                    if (text.isEmpty) return;
+
+                                    _textController.clear();
+                                    _focusNode.requestFocus();
+
+                                    await ref
+                                        .read(chatProvider.notifier)
+                                        .sendMessage(text);
+
+                                    _scrollToBottom();
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                      color: theme.canvasColor,
-                                      borderRadius: BorderRadius.circular(40),
+                                      shape: BoxShape.circle,
+                                      color: theme.cardColor,
                                     ),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        /// TEXT INPUT
-                                        Expanded(
-                                          child: ConstrainedBox(
-                                            constraints: const BoxConstraints(
-                                              maxHeight:
-                                                  100, // 🔥 limits growth
-                                            ),
-                                            child: SingleChildScrollView(
-                                              controller: _scrollController,
-                                              child: TextField(
-                                                controller: _textController,
-                                                focusNode: _focusNode,
-                                                keyboardType:
-                                                    TextInputType.multiline,
-                                                textInputAction: TextInputAction
-                                                    .newline, // Enter = newline
-                                                maxLines: null,
-                                                minLines: 1,
-                                                onChanged: (_) => _autoScroll(),
-                                                style: textTheme.labelMedium,
-                                                decoration: InputDecoration(
-                                                  hintText:
-                                                      'Ask Elves Anything...',
-                                                  hintStyle: TextStyle(
-                                                    fontSize: 14.sp,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: theme.cardColor,
-                                                  ),
-                                                  border: InputBorder.none,
-                                                  isDense: true,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-
-                                        SizedBox(width: 2.w),
-
-                                        /// SEND BUTTON
-                                        GestureDetector(
-                                          onTap: () {
-                                            _sendMessage(_textController.text);
-                                            _textController.clear();
-                                            _focusNode.requestFocus();
-                                          },
-                                          child:
-                                              Container(
-                                                    padding:
-                                                        const EdgeInsets.all(8),
-                                                    decoration:
-                                                        BoxDecoration(
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          color: theme.cardColor,
-                                                        ),
-                                                    child:  Icon(
-                                                      Icons.send,
-                                                      size: 18,
-                                                      color: theme.scaffoldBackgroundColor,
-                                                    ),
-                                                  )
-                                                  .animate() // ✨ Flutter Animate
-                                                  .scale(duration: 150.ms)
-                                                  .fadeIn(),
-                                        ),
-                                      ],
+                                    child: Icon(
+                                      Icons.send,
+                                      size: 18,
+                                      color: theme.scaffoldBackgroundColor,
                                     ),
                                   )
-                                  .animate()
-                                  .fadeIn(duration: 250.ms)
-                                  .slideY(begin: 0.2),
+                                      .animate()
+                                      .scale(duration: 150.ms)
+                                      .fadeIn(),
+                                ),
+                              ],
+                            ),
+                          )
+                              .animate()
+                              .fadeIn(duration: 250.ms)
+                              .slideY(begin: 0.2),
                         ),
                       ),
                     ],
@@ -279,36 +296,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
     );
   }
 
-  Widget _chatList() {
-    return AnimatedList(
-      key: _listKey,
-      reverse: true,
-      padding: EdgeInsets.only(
-        top: 80,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 90,
-        left: 12,
-        right: 12,
-      ),
-      initialItemCount: _messages.length,
-      itemBuilder: (context, index, animation) {
-        final message = _messages[index];
-
-        return SlideTransition(
-          position: animation.drive(
-            Tween(
-              begin: const Offset(0, 0.4), // 👈 from keyboard
-              end: Offset.zero,
-            ).chain(CurveTween(curve: Curves.easeOut)),
-          ),
-          child: FadeTransition(
-            opacity: animation,
-            child: _chatBubble(message),
-          ),
-        );
-      },
-    );
-  }
-
+  /// Chat bubble
   Widget _chatBubble(ChatMessage message) {
     final theme = Theme.of(context);
     return Align(
@@ -355,12 +343,3 @@ class HeroButton extends StatelessWidget {
   }
 }
 
-class ChatMessage {
-  final String text;
-  final bool isMe;
-
-  ChatMessage({
-    required this.text,
-    required this.isMe,
-  });
-}

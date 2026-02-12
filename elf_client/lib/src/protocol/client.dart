@@ -10,18 +10,35 @@
 // ignore_for_file: invalid_use_of_internal_member
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:serverpod_client/serverpod_client.dart' as _i1;
+import 'dart:async' as _i2;
 import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
-    as _i1;
-import 'package:serverpod_client/serverpod_client.dart' as _i2;
-import 'dart:async' as _i3;
+    as _i3;
 import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
     as _i4;
 import 'package:elf_client/src/protocol/greetings/greeting.dart' as _i5;
 import 'protocol.dart' as _i6;
 
+/// Endpoint for AI chat functionality
 /// {@category Endpoint}
-class EndpointGoogleIdp extends _i1.EndpointGoogleIdpBase {
-  EndpointGoogleIdp(_i2.EndpointCaller caller) : super(caller);
+class EndpointChat extends _i1.EndpointRef {
+  EndpointChat(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'chat';
+
+  /// Sends a message to Gemini and returns the AI response
+  _i2.Future<String> sendMessage(String message) =>
+      caller.callServerEndpoint<String>(
+        'chat',
+        'sendMessage',
+        {'message': message},
+      );
+}
+
+/// {@category Endpoint}
+class EndpointGoogleIdp extends _i3.EndpointGoogleIdpBase {
+  EndpointGoogleIdp(_i1.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'googleIdp';
@@ -31,7 +48,7 @@ class EndpointGoogleIdp extends _i1.EndpointGoogleIdpBase {
   ///
   /// If a new user is created an associated [UserProfile] is also created.
   @override
-  _i3.Future<_i4.AuthSuccess> login({
+  _i2.Future<_i4.AuthSuccess> login({
     required String idToken,
     required String? accessToken,
   }) => caller.callServerEndpoint<_i4.AuthSuccess>(
@@ -48,7 +65,7 @@ class EndpointGoogleIdp extends _i1.EndpointGoogleIdpBase {
 /// is made available on the server and enables automatic token refresh on the client.
 /// {@category Endpoint}
 class EndpointJwtRefresh extends _i4.EndpointRefreshJwtTokens {
-  EndpointJwtRefresh(_i2.EndpointCaller caller) : super(caller);
+  EndpointJwtRefresh(_i1.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'jwtRefresh';
@@ -72,7 +89,7 @@ class EndpointJwtRefresh extends _i4.EndpointRefreshJwtTokens {
   /// This endpoint is unauthenticated, meaning the client won't include any
   /// authentication information with the call.
   @override
-  _i3.Future<_i4.AuthSuccess> refreshAccessToken({
+  _i2.Future<_i4.AuthSuccess> refreshAccessToken({
     required String refreshToken,
   }) => caller.callServerEndpoint<_i4.AuthSuccess>(
     'jwtRefresh',
@@ -85,14 +102,14 @@ class EndpointJwtRefresh extends _i4.EndpointRefreshJwtTokens {
 /// This is an example endpoint that returns a greeting message through
 /// its [hello] method.
 /// {@category Endpoint}
-class EndpointGreeting extends _i2.EndpointRef {
-  EndpointGreeting(_i2.EndpointCaller caller) : super(caller);
+class EndpointGreeting extends _i1.EndpointRef {
+  EndpointGreeting(_i1.EndpointCaller caller) : super(caller);
 
   @override
   String get name => 'greeting';
 
   /// Returns a personalized greeting message: "Hello {name}".
-  _i3.Future<_i5.Greeting> hello(String name) =>
+  _i2.Future<_i5.Greeting> hello(String name) =>
       caller.callServerEndpoint<_i5.Greeting>(
         'greeting',
         'hello',
@@ -102,16 +119,16 @@ class EndpointGreeting extends _i2.EndpointRef {
 
 class Modules {
   Modules(Client client) {
-    serverpod_auth_idp = _i1.Caller(client);
+    serverpod_auth_idp = _i3.Caller(client);
     serverpod_auth_core = _i4.Caller(client);
   }
 
-  late final _i1.Caller serverpod_auth_idp;
+  late final _i3.Caller serverpod_auth_idp;
 
   late final _i4.Caller serverpod_auth_core;
 }
 
-class Client extends _i2.ServerpodClientShared {
+class Client extends _i1.ServerpodClientShared {
   Client(
     String host, {
     dynamic securityContext,
@@ -122,12 +139,12 @@ class Client extends _i2.ServerpodClientShared {
     Duration? streamingConnectionTimeout,
     Duration? connectionTimeout,
     Function(
-      _i2.MethodCallContext,
+      _i1.MethodCallContext,
       Object,
       StackTrace,
     )?
     onFailedCall,
-    Function(_i2.MethodCallContext)? onSucceededCall,
+    Function(_i1.MethodCallContext)? onSucceededCall,
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
@@ -140,11 +157,14 @@ class Client extends _i2.ServerpodClientShared {
          disconnectStreamsOnLostInternetConnection:
              disconnectStreamsOnLostInternetConnection,
        ) {
+    chat = EndpointChat(this);
     googleIdp = EndpointGoogleIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
     greeting = EndpointGreeting(this);
     modules = Modules(this);
   }
+
+  late final EndpointChat chat;
 
   late final EndpointGoogleIdp googleIdp;
 
@@ -155,14 +175,15 @@ class Client extends _i2.ServerpodClientShared {
   late final Modules modules;
 
   @override
-  Map<String, _i2.EndpointRef> get endpointRefLookup => {
+  Map<String, _i1.EndpointRef> get endpointRefLookup => {
+    'chat': chat,
     'googleIdp': googleIdp,
     'jwtRefresh': jwtRefresh,
     'greeting': greeting,
   };
 
   @override
-  Map<String, _i2.ModuleEndpointCaller> get moduleLookup => {
+  Map<String, _i1.ModuleEndpointCaller> get moduleLookup => {
     'serverpod_auth_idp': modules.serverpod_auth_idp,
     'serverpod_auth_core': modules.serverpod_auth_core,
   };

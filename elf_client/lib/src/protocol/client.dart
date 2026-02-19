@@ -19,7 +19,6 @@ import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
 import 'package:elf_client/src/protocol/greetings/greeting.dart' as _i5;
 import 'protocol.dart' as _i6;
 
-/// Endpoint for AI chat functionality
 /// {@category Endpoint}
 class EndpointChat extends _i1.EndpointRef {
   EndpointChat(_i1.EndpointCaller caller) : super(caller);
@@ -27,7 +26,6 @@ class EndpointChat extends _i1.EndpointRef {
   @override
   String get name => 'chat';
 
-  /// Sends a message to Gemini and returns the AI response
   _i2.Future<String> sendMessage(String message) =>
       caller.callServerEndpoint<String>(
         'chat',

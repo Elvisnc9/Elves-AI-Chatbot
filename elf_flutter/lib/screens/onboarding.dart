@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:elf_client/elf_client.dart';
+import 'package:elf_flutter/widgets/robot.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,7 +13,6 @@ import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 import 'package:the_responsive_builder/the_responsive_builder.dart';
 // import 'package:video_player/video_player.dart';
 
-import 'package:elf_flutter/main.dart';
 import 'package:elf_flutter/shared/theme.dart';
 import 'package:elf_flutter/state/shellView.dart';
 
@@ -34,16 +34,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   void initState() {
     super.initState();
     _pageController = PageController();
-
-    // Initialize the video controller
-    // _controller = VideoPlayerController.asset(
-    //     'assets/This_character__202601230353_3p0ui.mp4')
-    //   ..initialize().then((_) {
-    //     setState(() {}); // Refresh UI when video is ready
-    //     _controller.play();
-    //     _controller.setVolume(0); // Auto-play
-    //     _controller.setLooping(true); // Loop video
-    //   });
 
     _pageController.addListener(() {
       setState(() {
@@ -116,26 +106,16 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           children: [
             const Spacer(),
 
-            // SizedBox(
-            //   // adjust as needed
-            //   height: 25.h,
-            //   child: _controller.value.isInitialized
-            //       ? ClipRRect(
-            //           borderRadius: BorderRadius.circular(16),
-            //           child: AspectRatio(
-            //             aspectRatio: _controller.value.aspectRatio,
-            //             child: VideoPlayer(_controller),
-            //           ),
-            //         )
-            //       : const Center(
-            //           child: CircularProgressIndicator(),
-            //         ),
-            // )
-            //     .animate()
-            //     .fadeIn(duration: 800.ms)
-            //     .scale(begin: const Offset(0.85, 0.85)),
+            SizedBox(
+              // adjust as needed
+              height: 25.h,
+              child: Robot()
+               )
+                .animate()
+                .fadeIn(duration: 800.ms)
+                .scale(begin: const Offset(0.85, 0.85)),
 
-            SizedBox(height: 45.h),
+            SizedBox(height: 5.h),
 
             /// TEXT
             SizedBox(

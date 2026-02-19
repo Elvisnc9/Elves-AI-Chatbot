@@ -11,7 +11,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../endpoints/chatEndpoint.dart' as _i2;
+import '../endpoints/chat_endpoint.dart' as _i2;
 import '../endpoints/googleIdbaseEndpoint.dart' as _i3;
 import '../endpoints/jwt_refresh_endpoint.dart' as _i4;
 import '../greetings/greeting_endpoint.dart' as _i5;

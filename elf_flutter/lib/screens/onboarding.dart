@@ -112,10 +112,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
     return Column(
       children: [
-        const Spacer(),
+      
     
        SizedBox(
-      height: 50.h,
+      height: 55.h,
       
     ),
     
@@ -123,7 +123,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     
         /// TEXT
         SizedBox(
-          height: 30.h,
+          height: 28.h,
           child: PageView.builder(
             controller: _pageController,
             itemCount: pages.length,
@@ -138,6 +138,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          
           children: List.generate(
             pages.length,
             (index) => Container(
@@ -154,8 +155,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           ),
         ),
     
-        const Spacer(),
-       AnimatedGoogleButton(
+        SizedBox(height: 2.h,),
+      AnimatedGoogleButton(
       logo: _isloading
           ? Indicator()
           : Image.asset(
@@ -290,7 +291,7 @@ class PageSlider extends StatelessWidget {
           color: theme.secondaryHeaderColor,
           weight: FontWeight.w800,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 5),
         Text(Subtext,
                 textAlign: TextAlign.center,
                 style: textTheme.labelMedium?.copyWith(

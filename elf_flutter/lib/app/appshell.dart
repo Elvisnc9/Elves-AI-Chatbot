@@ -5,7 +5,6 @@ import 'package:elf_flutter/screens/chatScreen.dart';
 import 'package:elf_flutter/screens/home.dart';
 import 'package:elf_flutter/screens/onboarding.dart';
 import 'package:elf_flutter/screens/settings.dart';
-
 import 'package:elf_flutter/state/shellView.dart';
 
 class AppShell extends ConsumerStatefulWidget {
@@ -21,15 +20,12 @@ class AppShellState extends ConsumerState<AppShell>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scale;
-  late Animation<double> _rotationY;
-  late Animation<double> _offsetY;
 
   bool _isAnimating = false;
 
   @override
   void initState() {
     super.initState();
-
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2000),
@@ -38,22 +34,16 @@ class AppShellState extends ConsumerState<AppShell>
     // Scale animation
     _scale = TweenSequence([
       TweenSequenceItem(
-          tween: Tween(begin: 1.0, end: 1.8).chain(CurveTween(curve: Curves.easeInOut)), 
+          tween: Tween(begin: 1.0, end: 1.2).chain(CurveTween(curve: Curves.easeIn)), 
           weight: 40),
       TweenSequenceItem(
-          tween: Tween(begin: 1.8, end: 0.6).chain(CurveTween(curve: Curves.easeInOut)), 
+          tween: Tween(begin: 1.4, end: 0.6).chain(CurveTween(curve: Curves.easeOut)), 
           weight: 60),
     ]).animate(_controller);
 
     // Rotation 360°
-    _rotationY = Tween<double>(begin: 0, end: 2 * 3.14159)
-        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+   
 
-    // Vertical offset
-    _offsetY = TweenSequence([
-      TweenSequenceItem(tween: Tween(begin: 0.0, end: -40.0), weight: 50),
-  TweenSequenceItem(tween: Tween(begin: -40.0, end: 0.0), weight: 50),
-    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
   }
 
   Future<void> startTransition(ShellView target) async {
@@ -63,7 +53,7 @@ class AppShellState extends ConsumerState<AppShell>
     _controller.forward(from: 0);
 
     // Switch page mid-animation
-    Future.delayed(const Duration(milliseconds: 400), () {
+    Future.delayed(const Duration(milliseconds: 900), () {
       ref.read(shellViewProvider.notifier).state = target;
     });
 
@@ -76,7 +66,7 @@ class AppShellState extends ConsumerState<AppShell>
       case ShellView.onboarding:
         return 1.0;
       case ShellView.home:
-        return 0.6;
+        return 0.8;
       case ShellView.chat:
         return 0.45;
       default:
@@ -84,12 +74,30 @@ class AppShellState extends ConsumerState<AppShell>
     }
   }
 
+  double _defaultLeft(ShellView view, double screenWidth) {
+  switch (view) {
+    case ShellView.onboarding:
+      // Center horizontally
+      return (screenWidth - 500) / 2;
+
+    case ShellView.home:
+      // Stick to left edge
+      return 0;
+
+    case ShellView.chat:
+      return 20; // example position for chat
+
+    default:
+      return 0;
+  }
+}
+
   double _defaultTop(ShellView view, double screenHeight) {
     switch (view) {
       case ShellView.onboarding:
         return screenHeight * 0.009;
       case ShellView.home:
-        return screenHeight * 0.2;
+        return screenHeight * 0;
       case ShellView.chat:
         return screenHeight * 0.15;
       default:
@@ -120,44 +128,46 @@ class AppShellState extends ConsumerState<AppShell>
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      body: SafeArea(
-        child: Stack(
-          children: [
-            // Pages
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 250),
-              child: _buildPage(view),
-            ),
-
-            // Robot
-            if (view != ShellView.settings)
-              AnimatedBuilder(
-                animation: _controller,
-                builder: (_, child) {
-                  final scale = _isAnimating ? _scale.value : _defaultScale(view);
-                  final topPosition =
-                      _defaultTop(view, screenHeight) + (_isAnimating ? _offsetY.value : 0);
-
-                  return Positioned(
-                    top: topPosition,
-                    left: (screenWidth - 500) / 2, // center horizontally
-                    child: Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.identity()
-                        ..scale(scale)
-                        ..rotateY(_isAnimating ? _rotationY.value : 0),
-                      child: SizedBox(
-                        width: 500,
-                        height: 500,
-                        child: child,
-                      ),
+      extendBodyBehindAppBar: true,
+      resizeToAvoidBottomInset: false,
+      body: Stack(
+        children: [
+          // Pages
+      
+          // Robot
+          if (view != ShellView.settings)
+            AnimatedBuilder(
+              animation: _controller,
+              builder: (_, child) {
+                final scale = _isAnimating ? _scale.value : _defaultScale(view);
+                final topPosition =
+                    _defaultTop(view, screenHeight) ;
+      
+                return Positioned(
+                  top: topPosition,
+                  left: _defaultLeft(view, screenWidth),
+       // center horizontally
+                  child: Transform(
+                    alignment: Alignment.center,
+                    transform: Matrix4.identity()
+                      ..scale(scale),
+                    child: SizedBox(
+                      width: 500,
+                      height: 500,
+                      child: child,
                     ),
-                  );
-                },
-                child: widget.robot,
-              ),
-          ],
-        ),
+                  ),
+                );
+              },
+              child: widget.robot,
+            ),
+      
+      
+              AnimatedSwitcher(
+            duration: const Duration(milliseconds: 250),
+            child: _buildPage(view),
+          ),
+        ],
       ),
     );
   }

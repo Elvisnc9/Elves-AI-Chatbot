@@ -3,6 +3,7 @@ import 'package:elf_flutter/app/appshell.dart';
 import 'package:elf_flutter/shared/theme.dart';
 import 'package:elf_flutter/widgets/robot.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:serverpod_flutter/serverpod_flutter.dart';
@@ -15,6 +16,11 @@ late String serverUrl;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(
+  const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+  ),
+);
   final serverUrl = await getServerUrl();
 
   client = Client(serverUrl)

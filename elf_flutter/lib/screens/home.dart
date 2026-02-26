@@ -1,3 +1,5 @@
+import 'package:elf_flutter/screens/chatScreen.dart';
+import 'package:elf_flutter/widgets/ChatScreem/DrawerSearchBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -62,58 +64,41 @@ class HomeContent extends ConsumerStatefulWidget {
 
 class _HomeContentState extends ConsumerState<HomeContent> {
 
-  final List<ChatModel> ChatList = [
-    ChatModel(
-      msg:
-          'What are Some common mistakes to avoid\n when coding a landing Page?',
-    ),
-    ChatModel(
-      msg:
-          'What are Some common mistakes to avoid\n when coding a landing Page?',
-    ),
-    ChatModel(
-      msg:
-          'What are Some common mistakes to avoid\n when coding a landing Page?',
-    ),
-    ChatModel(
-      msg:
-          'What are Some common mistakes to avoid\n when coding a landing Page?',
-    ),
-    ChatModel(
-      msg:
-          'What are Some common mistakes to avoid\n when coding a landing Page?',
-    ),
-    ChatModel(
-      msg:
-          'What are Some common mistakes to avoid\n when coding a landing Page?',
-    ),
-  ];
+ 
+
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final authState = ref.watch(authControllerProvider);
     final authNotifier = ref.read(authControllerProvider.notifier);
+      final TextEditingController myController = TextEditingController();
+    final FocusNode myFocusNode = FocusNode();
 
 
     ImageProvider avatar;
    
       avatar = const AssetImage('assets/google_Logo.png');
     
-    return Stack(
-      children: [
-        SingleChildScrollView(
-          child: Column(
+    return SafeArea(
+      child: Stack(
+        children: [
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.all(1.h),
+                padding: EdgeInsets.symmetric(horizontal: 1.h),
                 child:
                     Row(
                       children: [
-                       
+          //               HeroButton(
+          //  child:  Icon( Icons.arrow_back,),
+          //   onPressed: () {
+          //     ref.read(shellViewProvider.notifier).state = ShellView.onboarding;
+          //   },
+          // ),
                       Spacer(),
-
+                
                         Text(
                           'Elves AI',
                           style: textTheme.displayLarge?.copyWith(
@@ -121,9 +106,9 @@ class _HomeContentState extends ConsumerState<HomeContent> {
                             fontSize: 16.sp,
                           ),
                         ).animate().fadeIn().slideY(begin: -0.2),
-
+                
                         const Spacer(),
-
+                
                         
                         ProfileImageButton(
                           image: authState.userProfile?.imageUrl != null
@@ -137,17 +122,39 @@ class _HomeContentState extends ConsumerState<HomeContent> {
                       ],
                     ).animate().fadeIn(),
               ),
-
-              SizedBox(height: 6.h),
-
+                
+              SizedBox(height: 1.h),
+                
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Text(
                   'How May I help you \ntoday,  ADAMS?',
-                  style: textTheme.displayLarge?.copyWith(fontSize: 30.sp),
+                  style: textTheme.displayLarge?.copyWith(fontSize: 32.sp,),
                 ),
               ).animate().fadeIn().slideX(begin: 0.3),
 
+                          
+
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                              child: ChatInputBar(
+                                controller: myController,
+                                focusNode: myFocusNode,
+                                ischatScreen: false,
+                                onSend: (text) async {
+                                  print(text);
+                                },
+                              ),
+                            ),
+
+                            SizedBox(height: 3.h ),
+              RowTitle(textTheme: textTheme, title: 'Recent Chats'),
+              SizedBox(height: 1.h ),
+               PremiumFloatingChips(),
+                SizedBox(height: 1.h),
+
+
+RowTitle(textTheme: textTheme, title: 'Features'),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
@@ -156,38 +163,41 @@ class _HomeContentState extends ConsumerState<HomeContent> {
                       icon: Icons.chat,
                       textColor: AppColors.dark,
                       title: 'Chat\n With AI',
+                      Subtitle: 'Talk to your AI assistant and get instant answers, smart suggestions, and real-time support.',
                       onPressed: () {
                           ref.read(shellViewProvider.notifier).state = ShellView.chat;
                       },
-                      height: 26.h,
+                      height: 30.h,
                       width: 47.w,
                       color: Color(0xFFADFF2F),
                       
                       size: 35.sp,
                     ).animate().fadeIn().slideX(begin: -0.3 ,delay: 200.ms ),
-
+                
                     Padding(
-                      padding: const EdgeInsets.all(4.0),
+                      padding: const EdgeInsets.all(3.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Sectors(
                             icon: Icons.image,
                             title: 'Create AI Images',
+                            Subtitle: 'Generate stunning images with AI',
                             onPressed: () {},
-                            height: 13.h,
+                            height: 15.h,
                             width: 45.w,
-                             textColor: AppColors.light,
+                             textColor: Colors.white,
                             color: AppColors.primary,
                             size: 16.sp,
                           ).animate().fadeIn().slideY(begin: -0.3, delay: 200.ms),
                           SizedBox(height: 1.h),
-
+                
                           Sectors(
                             icon: Icons.video_call_rounded,
                             title: 'Create AI Videos',
+                            Subtitle: 'Generate stunning videos with AI',
                             onPressed: () {},
-                            height: 13.h,
+                            height: 15.h,
                             width: 45.w,
                             color: Color(0xFFF1DDCF),
                             size: 16.sp,
@@ -198,56 +208,32 @@ class _HomeContentState extends ConsumerState<HomeContent> {
                   ],
                 ),
               ),
-
-              const SizedBox(height: 10),
-
-              const SizedBox(height: 10),
-              RowTitle(textTheme: textTheme, title: 'Popular Prompts'),
-              SizedBox(height: 2.5.h),
-              ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: ChatList.length,
-                itemBuilder: (context, index) {
-                  return RecentChats(model: ChatList[index]);
-                },
-
                 
-              ),SizedBox(height: 8.h)
-            ],
-          ),
-        ),
+                
 
-        Positioned(
-          bottom: 5,
-          right: 10,
-          left: 10,
-          child: GestureDetector(
-            onTap: () {
-              ref.read(shellViewProvider.notifier).state = ShellView.chat;
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 25.w, vertical: 2.5.h),
-              decoration: BoxDecoration(
-                color: AppColors.light,
-                borderRadius: BorderRadius.circular(40),
-                 gradient: const LinearGradient(
-            colors: [Colors.white, Colors.white12],
+             
+            //   ListView.builder(
+            //     scrollDirection: Axis.vertical,
+            //     shrinkWrap: true,
+            //     physics: NeverScrollableScrollPhysics(),
+            //     itemCount: ChatList.length,
+            //     itemBuilder: (context, index) {
+            //       return RecentChats(model: ChatList[index]);
+            //     },
+                
+                
+            //   )
+
+          
+
+           
+             ],
           ),
-              ),
-              child: Text(
-                'Create New Chat',
-                style: textTheme.labelMedium?.copyWith(
-                  color: AppColors.dark,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.sp
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
+
+
+        
+        ],
+      ),
     );
   }
 }
@@ -271,18 +257,12 @@ class RowTitle extends StatelessWidget {
           Text(
             title,
             style: textTheme.displayMedium?.copyWith(
-              fontSize: 25.sp
+              fontSize: 28.sp,
             ),
           ),
 
-          const Spacer(),
-          Text(
-            ' See All',
-            style: textTheme.labelMedium?.copyWith(
-              fontWeight: FontWeight.w500,
-              fontSize: 12.sp,
-            ),
-          ),
+      
+        
         ],
       ),
     );

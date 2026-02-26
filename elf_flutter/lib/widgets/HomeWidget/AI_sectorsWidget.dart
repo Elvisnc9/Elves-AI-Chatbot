@@ -8,11 +8,13 @@ class Sectors extends StatelessWidget {
     super.key, 
     required this.icon, 
     required this.title,
+    required this.Subtitle,
      required this.onPressed, 
      required this.height,
       required this.width, 
       required this.color, 
       required this.size,
+      
        this.textColor = AppColors.dark
   });
 
@@ -21,6 +23,7 @@ class Sectors extends StatelessWidget {
   final double height;
   final double width;
   final String title;
+  final String Subtitle;
   final VoidCallback onPressed;
   final double size;
   final Color textColor ;
@@ -37,7 +40,7 @@ class Sectors extends StatelessWidget {
           height: height,
           width: width,
           child: Padding(
-            padding:  EdgeInsets.only(left: 1.5.h, top: 2.h,right: 0.5.h, bottom:1.5.h ),
+            padding:  EdgeInsets.only(left: 1.5.h, top: 1.h,right: 0.5.h, bottom:1.5.h ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -62,10 +65,20 @@ class Sectors extends StatelessWidget {
                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
                     fontSize: size,
                     color: textColor,
-                    fontWeight: FontWeight.w300,
+                    fontWeight: FontWeight.w400,
                     height: 1.1
                   ),
-                )
+                ),
+
+                SizedBox(height: 0.5.h,),
+
+                 Text(
+                  Subtitle,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    fontSize: 10.sp,
+                    color: textColor.withOpacity(0.7),
+                  ),
+                 ),
                 
                
                   

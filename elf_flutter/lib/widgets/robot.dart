@@ -11,22 +11,22 @@ class Robot extends StatefulWidget {
 class _RobotState extends State<Robot> {
 
   O3DController controller = O3DController();
+
   @override
   Widget build(BuildContext context) {
     return O3D.asset(
-      src : 'assets/mechdrone.glb',
+      src : 'assets/mech_drone(2).glb',
       autoPlay: true,
-      cameraControls: true,
+      cameraControls: false,      
       disableZoom: true,
       disablePan: true,
       disableTap: true,
       controller: controller,
       cameraOrbit: CameraOrbit(
-        180, 75,  0.6
+        180, 85,  0.2
       ),
       cameraTarget: CameraTarget(0, 0.3, 0),
-      
-        
     );
+  
   }
 }

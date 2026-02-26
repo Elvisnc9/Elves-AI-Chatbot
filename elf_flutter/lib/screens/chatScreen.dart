@@ -48,251 +48,253 @@ class _ChatViewState extends ConsumerState<ChatView> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return DrawerScaffold(
-      controller: drawerController,
-      drawers: [
-        SideDrawer(
-          color: theme.canvasColor,
-          percentage: 0.85,
-          degree: 15,
-          drawerWidth: 250,
-          slide: true,
-          animation: true,
-          alignment: Alignment.topLeft,
-          headerView: SearchBox(),
-          footerView: DrawerFooter(),
-          child: ElvesDrawer(),
-        ),
-      ],
-      builder: (context, id) {
-        return GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTapDown: (_) {
-            FocusManager.instance.primaryFocus?.unfocus();
-            drawerController.closeDrawer();
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(2),
-            child: Stack(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        /// ☰ MENU (OPENS DRAWER)
-                        IconButton(
-                          onPressed: () {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            drawerController.openDrawer();
-                          },
-                          icon: const Icon(Icons.menu),
-                        ),
-                        SizedBox(width: 5.w),
-                        Material(
-                          type: MaterialType.transparency,
-                          child: GestureDetector(
-                            onTap: () {
+    return SafeArea(
+      child: DrawerScaffold(
+        controller: drawerController,
+        drawers: [
+          SideDrawer(
+            color: theme.canvasColor,
+            percentage: 0.85,
+            degree: 15,
+            drawerWidth: 250,
+            slide: true,
+            animation: true,
+            alignment: Alignment.topLeft,
+            headerView: SearchBox(),
+            footerView: DrawerFooter(),
+            child: ElvesDrawer(),
+          ),
+        ],
+        builder: (context, id) {
+          return GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTapDown: (_) {
+              FocusManager.instance.primaryFocus?.unfocus();
+              drawerController.closeDrawer();
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(2),
+              child: Stack(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          /// ☰ MENU (OPENS DRAWER)
+                          IconButton(
+                            onPressed: () {
                               FocusManager.instance.primaryFocus?.unfocus();
-                              ref.read(shellViewProvider.notifier).state =
-                                  ShellView.home;
+                              drawerController.openDrawer();
                             },
+                            icon: const Icon(Icons.menu),
+                          ),
+                          SizedBox(width: 5.w),
+                          Material(
+                            type: MaterialType.transparency,
+                            child: GestureDetector(
+                              onTap: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                ref.read(shellViewProvider.notifier).state =
+                                    ShellView.home;
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(1.h),
+                                decoration: BoxDecoration(
+                                  color:
+                                      theme.scaffoldBackgroundColor.withOpacity(0.4),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.star,
+                                      color: Colors.yellow,
+                                      size: 2.h,
+                                    ),
+                                    SizedBox(width: 1.w),
+                                    Text(
+                                      'Upgrade',
+                                      style: textTheme.displayLarge?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12.sp,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+      
+                  /// Chat List
+                  Positioned.fill(
+                    top: 60,
+                    child: Consumer(
+                      builder: (context, ref, _) {
+                        final chatState = ref.watch(chatProvider);
+                        final messages = chatState.messages;
+                        final isLoading = chatState.isLoading;
+      
+                        // Auto-scroll whenever messages change
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          _scrollToBottom();
+                        });
+      
+                        return ListView.builder(
+                          controller: _scrollController,
+                          reverse: true,
+                          padding: EdgeInsets.only(
+                            top: 80,
+                            bottom: MediaQuery.of(context).viewInsets.bottom + 90,
+                            left: 12,
+                            right: 12,
+                          ),
+                          itemCount: messages.length,
+                          itemBuilder: (context, index) {
+                            final message = messages[index];
+                            return _chatBubble(message);
+                          },
+                        );
+                      },
+                    ),
+                  ),
+      
+                  /// Loading indicator
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final isLoading = ref.watch(chatProvider).isLoading;
+                      if (!isLoading) return const SizedBox.shrink();
+                      return Positioned(
+                        bottom: 90,
+                        left: 20,
+                        child: Row(
+                          children: [
+                            const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                            const SizedBox(width: 10),
+                            Text("Elves is typing...", style: textTheme.labelMedium),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+      
+                  /// Input field + send button
+                  Positioned(
+                    bottom: 10,
+                    left: 12,
+                    right: 12,
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(2.h),
+                          decoration: BoxDecoration(
+                            color: theme.canvasColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.add,
+                            color: theme.secondaryHeaderColor,
+                            size: 2.5.h,
+                          ),
+                        ),
+                        SizedBox(width: 1.w),
+                        Expanded(
+                          child: AnimatedSize(
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeOut,
                             child: Container(
-                              padding: EdgeInsets.all(1.h),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 2.h,
+                                vertical: 1.5.h,
+                              ),
                               decoration: BoxDecoration(
-                                color:
-                                    theme.scaffoldBackgroundColor.withOpacity(0.4),
-                                borderRadius: BorderRadius.circular(20),
+                                color: theme.canvasColor,
+                                borderRadius: BorderRadius.circular(40),
                               ),
                               child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  Icon(
-                                    Icons.star,
-                                    color: Colors.yellow,
-                                    size: 2.h,
-                                  ),
-                                  SizedBox(width: 1.w),
-                                  Text(
-                                    'Upgrade',
-                                    style: textTheme.displayLarge?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12.sp,
+                                  /// TEXT INPUT
+                                  Expanded(
+                                    child: TextField(
+                                      controller: _textController,
+                                      focusNode: _focusNode,
+                                      keyboardType: TextInputType.multiline,
+                                      textInputAction: TextInputAction.newline,
+                                      maxLines: null,
+                                      minLines: 1,
+                                      style: textTheme.labelMedium,
+                                      decoration: InputDecoration(
+                                        hintText: 'Ask Elves Anything...',
+                                        hintStyle: TextStyle(
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.bold,
+                                          color: theme.cardColor,
+                                        ),
+                                        border: InputBorder.none,
+                                        isDense: true,
+                                      ),
                                     ),
+                                  ),
+      
+                                  SizedBox(width: 2.w),
+      
+                                  /// SEND BUTTON
+                                  GestureDetector(
+                                    onTap: () async {
+                                      final text = _textController.text.trim();
+                                      if (text.isEmpty) return;
+      
+                                      _textController.clear();
+                                      _focusNode.requestFocus();
+      
+                                      await ref
+                                          .read(chatProvider.notifier)
+                                          .sendMessage(text);
+      
+                                      _scrollToBottom();
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: theme.cardColor,
+                                      ),
+                                      child: Icon(
+                                        Icons.send,
+                                        size: 18,
+                                        color: theme.scaffoldBackgroundColor,
+                                      ),
+                                    )
+                                        .animate()
+                                        .scale(duration: 150.ms)
+                                        .fadeIn(),
                                   ),
                                 ],
                               ),
-                            ),
+                            )
+                                .animate()
+                                .fadeIn(duration: 250.ms)
+                                .slideY(begin: 0.2),
                           ),
                         ),
                       ],
                     ),
-                  ],
-                ),
-
-                /// Chat List
-                Positioned.fill(
-                  top: 60,
-                  child: Consumer(
-                    builder: (context, ref, _) {
-                      final chatState = ref.watch(chatProvider);
-                      final messages = chatState.messages;
-                      final isLoading = chatState.isLoading;
-
-                      // Auto-scroll whenever messages change
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        _scrollToBottom();
-                      });
-
-                      return ListView.builder(
-                        controller: _scrollController,
-                        reverse: true,
-                        padding: EdgeInsets.only(
-                          top: 80,
-                          bottom: MediaQuery.of(context).viewInsets.bottom + 90,
-                          left: 12,
-                          right: 12,
-                        ),
-                        itemCount: messages.length,
-                        itemBuilder: (context, index) {
-                          final message = messages[index];
-                          return _chatBubble(message);
-                        },
-                      );
-                    },
                   ),
-                ),
-
-                /// Loading indicator
-                Consumer(
-                  builder: (context, ref, _) {
-                    final isLoading = ref.watch(chatProvider).isLoading;
-                    if (!isLoading) return const SizedBox.shrink();
-                    return Positioned(
-                      bottom: 90,
-                      left: 20,
-                      child: Row(
-                        children: [
-                          const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                          const SizedBox(width: 10),
-                          Text("Elves is typing...", style: textTheme.labelMedium),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-
-                /// Input field + send button
-                Positioned(
-                  bottom: 10,
-                  left: 12,
-                  right: 12,
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(2.h),
-                        decoration: BoxDecoration(
-                          color: theme.canvasColor,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.add,
-                          color: theme.secondaryHeaderColor,
-                          size: 2.5.h,
-                        ),
-                      ),
-                      SizedBox(width: 1.w),
-                      Expanded(
-                        child: AnimatedSize(
-                          duration: const Duration(milliseconds: 200),
-                          curve: Curves.easeOut,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 2.h,
-                              vertical: 1.5.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: theme.canvasColor,
-                              borderRadius: BorderRadius.circular(40),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                /// TEXT INPUT
-                                Expanded(
-                                  child: TextField(
-                                    controller: _textController,
-                                    focusNode: _focusNode,
-                                    keyboardType: TextInputType.multiline,
-                                    textInputAction: TextInputAction.newline,
-                                    maxLines: null,
-                                    minLines: 1,
-                                    style: textTheme.labelMedium,
-                                    decoration: InputDecoration(
-                                      hintText: 'Ask Elves Anything...',
-                                      hintStyle: TextStyle(
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.bold,
-                                        color: theme.cardColor,
-                                      ),
-                                      border: InputBorder.none,
-                                      isDense: true,
-                                    ),
-                                  ),
-                                ),
-
-                                SizedBox(width: 2.w),
-
-                                /// SEND BUTTON
-                                GestureDetector(
-                                  onTap: () async {
-                                    final text = _textController.text.trim();
-                                    if (text.isEmpty) return;
-
-                                    _textController.clear();
-                                    _focusNode.requestFocus();
-
-                                    await ref
-                                        .read(chatProvider.notifier)
-                                        .sendMessage(text);
-
-                                    _scrollToBottom();
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: theme.cardColor,
-                                    ),
-                                    child: Icon(
-                                      Icons.send,
-                                      size: 18,
-                                      color: theme.scaffoldBackgroundColor,
-                                    ),
-                                  )
-                                      .animate()
-                                      .scale(duration: 150.ms)
-                                      .fadeIn(),
-                                ),
-                              ],
-                            ),
-                          )
-                              .animate()
-                              .fadeIn(duration: 250.ms)
-                              .slideY(begin: 0.2),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -343,3 +345,127 @@ class HeroButton extends StatelessWidget {
   }
 }
 
+
+
+
+
+class ChatInputBar extends StatelessWidget {
+  const ChatInputBar({
+    super.key,
+    required this.controller,
+    required this.focusNode,
+    required this.onSend,
+     this.ischatScreen = true,
+  });
+
+  final TextEditingController controller;
+  final FocusNode focusNode;
+  final Future<void> Function(String text) onSend;
+ final bool ischatScreen;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
+    return Row(
+      children: [
+        /// PLUS BUTTON
+        if (ischatScreen) ...[
+          Container(
+            padding: EdgeInsets.all(2.h),
+            decoration: BoxDecoration(
+              color: theme.canvasColor,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.add,
+              color: theme.secondaryHeaderColor,
+              size: 2.5.h,
+            ),
+          ),
+          SizedBox(width: 1.w),
+        ],
+      
+
+        /// INPUT CONTAINER
+        Expanded(
+          child: AnimatedSize(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: 2.h,
+                vertical: 1.5.h,
+              ),
+              decoration: BoxDecoration(
+                color: theme.canvasColor,
+                borderRadius: BorderRadius.circular(40),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  /// TEXT FIELD
+                  Expanded(
+                    child: TextField(
+                      controller: controller,
+                      focusNode: focusNode,
+                      keyboardType: TextInputType.multiline,
+                      textInputAction: TextInputAction.newline,
+                      maxLines: null,
+                      minLines: 1,
+                      style: textTheme.labelMedium,
+                      decoration: InputDecoration(
+                        hintText: 'Ask Elves Anything...',
+                        hintStyle: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                          color: theme.cardColor,
+                        ),
+                        border: InputBorder.none,
+                        isDense: true,
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(width: 2.w),
+
+                  /// SEND BUTTON
+                  GestureDetector(
+                    onTap: () async {
+                      final text = controller.text.trim();
+                      if (text.isEmpty) return;
+
+                      controller.clear();
+                      focusNode.requestFocus();
+
+                      await onSend(text);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: theme.cardColor,
+                      ),
+                      child: Icon(
+                        Icons.send,
+                        size: 18,
+                        color: theme.scaffoldBackgroundColor,
+                      ),
+                    )
+                        .animate()
+                        .scale(duration: 150.ms)
+                        .fadeIn(),
+                  ),
+                ],
+              ),
+            )
+                .animate()
+                .fadeIn(duration: 250.ms)
+                .slideY(begin: 0.2),
+          ),
+        ),
+      ],
+    );
+  }
+}

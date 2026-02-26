@@ -29,151 +29,153 @@ class _SettingsContentState extends ConsumerState<Settings> {
     final theme = ref.watch(themeControllerProvider);
     final Texttheme = Theme.of(context).textTheme;
     final Themee = Theme.of(context);
-    return ListView(
-      padding: EdgeInsets.symmetric(vertical: 2.h, horizontal: 2.h),
-      children: [
-        Align(
-          alignment: Alignment.topLeft,
-          child: HeroButton(
-           child:  Icon( Icons.arrow_back,),
-            onPressed: () {
-              ref.read(shellViewProvider.notifier).state = ShellView.home;
-            },
+    return SafeArea(
+      child: ListView(
+        padding: EdgeInsets.symmetric(vertical: 2.h, horizontal: 2.h),
+        children: [
+          Align(
+            alignment: Alignment.topLeft,
+            child: HeroButton(
+             child:  Icon( Icons.arrow_back,),
+              onPressed: () {
+                ref.read(shellViewProvider.notifier).state = ShellView.home;
+              },
+            ),
           ),
-        ),
-
-        
-
-        _buildProfileHeader(),
-
-        SizedBox(height: 2.h),
-
-        sectionHeader('Subscription'),
-        SizedBox(height: 1.h),
-        _subscriptionTile(),
-
-        SizedBox(height: 2.h),
-
-        sectionHeader('Appearance'),
-        SizedBox(height: 1.h),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 2.h),
-          decoration: BoxDecoration(color: Themee.canvasColor,
-          borderRadius: BorderRadius.circular(20),),
-          child: Wrap(
-            spacing: 12,
-            runSpacing: 8,
-            children: [
-              _appearanceChip(label: 'System', mode: ThemeMode.system, currentTheme: theme, icon: Icons.tune, onTap:(){
-                ref.read(themeControllerProvider.notifier).setSystem();
-              } ),
-
-              _appearanceChip(
-                label: 'Dark',
-                mode: ThemeMode.dark,
-                currentTheme: theme,
-                icon: Icons.nightlight_round,
-                 onTap:(){
-                ref.read(themeControllerProvider.notifier).setDark();
-              }
-              ),
-              _appearanceChip(
-                label: 'Light',
-                mode: ThemeMode.light,
-                currentTheme: theme,
-                icon: Icons.wb_sunny_outlined,
-                 onTap:(){
-                ref.read(themeControllerProvider.notifier).setLight();
-              }
-              )
-            ],
-          ),).animate().fadeIn().slideX(begin: -0.3),
-        
-        SizedBox(height: 2.h),
-
-        sectionHeader('Haptics & Vibration'),
-        SizedBox(height: 1.h),
-        Container(
-          padding: EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Themee.canvasColor,
+      
+          
+      
+          _buildProfileHeader(),
+      
+          SizedBox(height: 2.h),
+      
+          sectionHeader('Subscription'),
+          SizedBox(height: 1.h),
+          _subscriptionTile(),
+      
+          SizedBox(height: 2.h),
+      
+          sectionHeader('Appearance'),
+          SizedBox(height: 1.h),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 2.h),
+            decoration: BoxDecoration(color: Themee.canvasColor,
+            borderRadius: BorderRadius.circular(20),),
+            child: Wrap(
+              spacing: 12,
+              runSpacing: 8,
+              children: [
+                _appearanceChip(label: 'System', mode: ThemeMode.system, currentTheme: theme, icon: Icons.tune, onTap:(){
+                  ref.read(themeControllerProvider.notifier).setSystem();
+                } ),
+      
+                _appearanceChip(
+                  label: 'Dark',
+                  mode: ThemeMode.dark,
+                  currentTheme: theme,
+                  icon: Icons.nightlight_round,
+                   onTap:(){
+                  ref.read(themeControllerProvider.notifier).setDark();
+                }
+                ),
+                _appearanceChip(
+                  label: 'Light',
+                  mode: ThemeMode.light,
+                  currentTheme: theme,
+                  icon: Icons.wb_sunny_outlined,
+                   onTap:(){
+                  ref.read(themeControllerProvider.notifier).setLight();
+                }
+                )
+              ],
+            ),).animate().fadeIn().slideX(begin: -0.3),
+          
+          SizedBox(height: 2.h),
+      
+          sectionHeader('Haptics & Vibration'),
+          SizedBox(height: 1.h),
+          Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Themee.canvasColor,
+              borderRadius: BorderRadius.circular(20)
+            ),
+            child: Column(
+              children: [
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(
+                    'When pressing buttons',
+                    style: Texttheme.labelMedium?.copyWith(color: Themee.secondaryHeaderColor),
+                  ),
+                  value: hapticsOnButtons,
+                  onChanged: (v) => setState(() => hapticsOnButtons = v),
+                  secondary: Icon(Icons.touch_app_outlined, color: Themee.secondaryHeaderColor),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                
+                  activeColor: Colors.white,
+                
+                  activeTrackColor: Themee.secondaryHeaderColor,
+                
+                  inactiveThumbColor: Colors.grey.shade700,
+                
+                  inactiveTrackColor: Colors.white,
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(
+                    'When Genie is responding',
+                    style: Theme.of(
+                      context,
+                    ).textTheme.labelMedium?.copyWith(color: Themee.secondaryHeaderColor),
+                  ),
+                  value: hapticsOnResponse,
+                  onChanged: (v) => setState(() => hapticsOnResponse = v),
+                  secondary: Icon(Icons.smart_toy_outlined, color: Themee.secondaryHeaderColor),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                
+                  activeColor: Colors.white,
+                
+                  activeTrackColor: Themee.secondaryHeaderColor,
+                
+                  inactiveThumbColor: Colors.grey.shade700,
+                
+                  inactiveTrackColor: Colors.white,
+                ),
+              ],
+            ),
+          ).animate().fadeIn().slideX(begin: 0.3),
+      
+          SizedBox(height: 2.h),
+      
+          sectionHeader('Data & Information'),
+          SizedBox(height: 1.h),
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(color: Themee.canvasColor,
             borderRadius: BorderRadius.circular(20)
-          ),
-          child: Column(
-            children: [
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(
-                  'When pressing buttons',
-                  style: Texttheme.labelMedium?.copyWith(color: Themee.secondaryHeaderColor),
-                ),
-                value: hapticsOnButtons,
-                onChanged: (v) => setState(() => hapticsOnButtons = v),
-                secondary: Icon(Icons.touch_app_outlined, color: Themee.secondaryHeaderColor),
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              
-                activeColor: Colors.white,
-              
-                activeTrackColor: Themee.secondaryHeaderColor,
-              
-                inactiveThumbColor: Colors.grey.shade700,
-              
-                inactiveTrackColor: Colors.white,
-              ),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(
-                  'When Genie is responding',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.labelMedium?.copyWith(color: Themee.secondaryHeaderColor),
-                ),
-                value: hapticsOnResponse,
-                onChanged: (v) => setState(() => hapticsOnResponse = v),
-                secondary: Icon(Icons.smart_toy_outlined, color: Themee.secondaryHeaderColor),
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              
-                activeColor: Colors.white,
-              
-                activeTrackColor: Themee.secondaryHeaderColor,
-              
-                inactiveThumbColor: Colors.grey.shade700,
-              
-                inactiveTrackColor: Colors.white,
-              ),
-            ],
-          ),
-        ).animate().fadeIn().slideX(begin: 0.3),
-
-        SizedBox(height: 2.h),
-
-        sectionHeader('Data & Information'),
-        SizedBox(height: 1.h),
-        Container(
-          padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(color: Themee.canvasColor,
-          borderRadius: BorderRadius.circular(20)
-        
-          ),
-
-          child: Column(
-            children: [
-              NavigationTile( icon: Icons.tune, text: 'Customize Genie', onTap: () {}),
-              NavigationTile( icon: Icons.storage, text: 'Data Controls', onTap: () {}),
-              NavigationTile( icon: Icons.privacy_tip_outlined, text: 'Privacy Policy', onTap: () {}),
-              
-              NavigationTile( icon: Icons.report_problem_outlined, text: 'Report Issue', onTap: () {}),
-            ],
-          ),
-        ).animate().fadeIn().slideY(begin: 0.3),
-
-        SizedBox(height: 2.h),
-
-        TextButton(onPressed: (){}, child: Text('LogOut',
-        style: Texttheme.labelMedium?.copyWith(color: Colors.red),
-        ))
-
-      ],
+          
+            ),
+      
+            child: Column(
+              children: [
+                NavigationTile( icon: Icons.tune, text: 'Customize Genie', onTap: () {}),
+                NavigationTile( icon: Icons.storage, text: 'Data Controls', onTap: () {}),
+                NavigationTile( icon: Icons.privacy_tip_outlined, text: 'Privacy Policy', onTap: () {}),
+                
+                NavigationTile( icon: Icons.report_problem_outlined, text: 'Report Issue', onTap: () {}),
+              ],
+            ),
+          ).animate().fadeIn().slideY(begin: 0.3),
+      
+          SizedBox(height: 2.h),
+      
+          TextButton(onPressed: (){}, child: Text('LogOut',
+          style: Texttheme.labelMedium?.copyWith(color: Colors.red),
+          ))
+      
+        ],
+      ),
     );
   }
 

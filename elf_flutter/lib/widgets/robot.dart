@@ -15,7 +15,7 @@ class _RobotState extends State<Robot> {
   @override
   Widget build(BuildContext context) {
     return O3D.asset(
-      src : 'assets/mech_drone(2).glb',
+      src : 'assets/mech_drone.glb',
       autoPlay: true,
       cameraControls: false,      
       disableZoom: true,

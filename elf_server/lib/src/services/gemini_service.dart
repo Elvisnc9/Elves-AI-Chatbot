@@ -9,7 +9,7 @@ class GeminiService {
 
   static const String _baseUrl = 
       'https://generativelanguage.googleapis.com/v1beta';
-  static const String _model = 'gemini-1.5-flash';
+  static const String _model = 'gemini-2.5-flash';
 
   /// Generates content using Gemini API
   Future<String> generateContent(String userMessage) async {

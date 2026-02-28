@@ -70,8 +70,7 @@ class _HomeContentState extends ConsumerState<HomeContent> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final authState = ref.watch(authControllerProvider);
-    final authNotifier = ref.read(authControllerProvider.notifier);
+    // final authNotifier = ref.read(authControllerProvider.notifier);
       final TextEditingController myController = TextEditingController();
     final FocusNode myFocusNode = FocusNode();
 
@@ -86,43 +85,7 @@ class _HomeContentState extends ConsumerState<HomeContent> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 1.h),
-                child:
-                    Row(
-                      children: [
-          //               HeroButton(
-          //  child:  Icon( Icons.arrow_back,),
-          //   onPressed: () {
-          //     ref.read(shellViewProvider.notifier).state = ShellView.onboarding;
-          //   },
-          // ),
-                      Spacer(),
-                
-                        Text(
-                          'Elves AI',
-                          style: textTheme.displayLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.sp,
-                          ),
-                        ).animate().fadeIn().slideY(begin: -0.2),
-                
-                        const Spacer(),
-                
-                        
-                        ProfileImageButton(
-                          image: authState.userProfile?.imageUrl != null
-                              ? NetworkImage(authState.userProfile!.imageUrl.toString())
-                              : const AssetImage('assets/google_Logo.png'),
-                          onPressed: () {
-                            ref.read(shellViewProvider.notifier).state =
-                                ShellView.settings;
-                          },
-                        ).animate().fadeIn().slideX(begin: 0.2),
-                      ],
-                    ).animate().fadeIn(),
-              ),
-                
+    
               SizedBox(height: 1.h),
                 
               Padding(
@@ -151,7 +114,7 @@ class _HomeContentState extends ConsumerState<HomeContent> {
               RowTitle(textTheme: textTheme, title: 'Recent Chats'),
               SizedBox(height: 1.h ),
                PremiumFloatingChips(),
-                SizedBox(height: 1.h),
+                SizedBox(height: 5.h),
 
 
 RowTitle(textTheme: textTheme, title: 'Features'),

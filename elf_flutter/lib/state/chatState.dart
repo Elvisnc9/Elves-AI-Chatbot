@@ -4,13 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elf_client/elf_client.dart';
 import 'package:elf_flutter/main.dart';
 
-// ==================== CLIENT PROVIDER ====================
 
-/// Serverpod client instance
-/// Update URL based on your environment:
-/// - Emulator: 'http://10.0.2.2:8080/'
-/// - iOS Simulator: 'http://localhost:8080/'
-/// - Physical device: 'http://YOUR_IP:8080/'
 final clientProvider = Provider<Client>((ref) {
   return client;
 });

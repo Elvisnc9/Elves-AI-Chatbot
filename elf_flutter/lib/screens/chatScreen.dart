@@ -4,6 +4,7 @@ import 'package:elf_flutter/shared/theme.dart';
 import 'package:elf_flutter/state/chatState.dart';
 import 'package:elf_flutter/state/shellView.dart';
 import 'package:elf_flutter/widgets/ChatScreem/DrawerSearchBar.dart';
+import 'package:elf_flutter/widgets/ChatScreem/typingdot_indicator.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -169,20 +170,10 @@ class _ChatViewState extends ConsumerState<ChatView> {
                       final isLoading = ref.watch(chatProvider).isLoading;
                       if (!isLoading) return const SizedBox.shrink();
                       return Positioned(
-                        bottom: 90,
+                        bottom: 80,
                         left: 20,
-                        child: Row(
-                          children: [
-                            const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                            const SizedBox(width: 10),
-                            Text("Elves is typing...", style: textTheme.labelMedium),
-                          ],
-                        ),
-                      );
+                        child: BouncingTypingDots(),
+                        );
                     },
                   ),
       
@@ -418,9 +409,9 @@ class ChatInputBar extends StatelessWidget {
                       decoration: InputDecoration(
                         hintText: 'Ask Elves Anything...',
                         hintStyle: TextStyle(
-                          fontSize: 14.sp,
+                          fontSize: 13.sp,
                           fontWeight: FontWeight.bold,
-                          color: theme.cardColor,
+                          color: theme.cardColor.withOpacity(0.4),
                         ),
                         border: InputBorder.none,
                         isDense: true,

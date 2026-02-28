@@ -97,7 +97,7 @@ class AppShellState extends ConsumerState<AppShell>
       case ShellView.onboarding:
         return screenHeight * 0.009;
       case ShellView.home:
-        return screenHeight * 0;
+        return screenHeight * 0.3;
       case ShellView.chat:
         return screenHeight * 0.15;
       default:

@@ -11,7 +11,6 @@ import 'package:the_responsive_builder/the_responsive_builder.dart';
 import 'package:elf_flutter/screens/elvesDrawer.dart';
 import 'package:elf_flutter/state/chatState.dart';
 import 'package:elf_flutter/state/shellView.dart';
-import 'package:elf_flutter/widgets/ChatScreem/DrawerSearchBar.dart';
 import 'package:elf_flutter/widgets/ChatScreem/typingdot_indicator.dart';
 import 'package:elf_flutter/widgets/HomeWidget/chatModels.dart';
 
@@ -65,46 +64,43 @@ class _ChatViewState extends ConsumerState<ChatView>
         children: [
           // ── LAYER 1: Chat List ──────────────────────────────────
           Positioned.fill(
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 10.h),
-              child: AnimatedOpacity(
-                opacity: hasMessages ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 400),
-                curve: Curves.easeOut,
-                child: IgnorePointer(
-                  ignoring: !hasMessages,
-                  child: ShaderMask(
-                    shaderCallback: (Rect bounds) {
-                      return const LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black,
-                          Colors.black,
-                          Colors.transparent,
-                        ],
-                        stops: [0.0, 0.4, 1.0, 1.0],
-                      ).createShader(bounds);
-                    },
-                    blendMode: BlendMode.dstIn,
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      reverse: true,
-                      padding: EdgeInsets.only(
-                        top: 70,
-                        bottom: 0,
-                        left: 12,
-                        right: 12,
-                      ),
-                      itemCount: messages.length,
-                      itemBuilder: (context, index) {
-                        final message = messages[index];
-                        return _chatBubble(message, key:ValueKey(message.id)
-                        
-                        );
-                      },
+            child: AnimatedOpacity(
+              opacity: hasMessages ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeOut,
+              child: IgnorePointer(
+                ignoring: !hasMessages,
+                child: ShaderMask(
+                  shaderCallback: (Rect bounds) {
+                    return const LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black,
+                        Colors.black,
+                        Colors.transparent,
+                      ],
+                      stops: [0.0, 0.3, 0.8, 1.0],
+                    ).createShader(bounds);
+                  },
+                  blendMode: BlendMode.dstIn,
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    reverse: true,
+                    padding: EdgeInsets.only(
+                      top: 70,
+                      bottom: 10.h,
+                      left: 12,
+                      right: 12,
                     ),
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      final message = messages[index];
+                      return _chatBubble(message, key:ValueKey(message.id)
+                      
+                      );
+                    },
                   ),
                 ),
               ),
@@ -135,7 +131,7 @@ class _ChatViewState extends ConsumerState<ChatView>
        bottom: 10,
       left: 0,
       right: 0,
-            child: _buildInputBar(theme, chatState.isLoading)),
+            child: _buildInputBar(theme, chatState.isLoading,  )),
 
           // ── LAYER 4: Loading dots ───────────────────────────────
           if (chatState.isLoading)
@@ -160,7 +156,7 @@ class _ChatViewState extends ConsumerState<ChatView>
         Padding(
           padding: const EdgeInsets.all(20.0),
           child: Text(
-            'How May I help you \ntoday,  ADAMS?',
+            'How May I help you \ntoday,  Victor?',
             style: textTheme.displayLarge?.copyWith(
               fontSize: 32.sp,
             ),
@@ -174,102 +170,115 @@ class _ChatViewState extends ConsumerState<ChatView>
     );
   }
 
-  Widget _buildInputBar(ThemeData theme, bool isLoading) {
+  
+
+  Widget _buildInputBar(ThemeData theme, bool isLoading,
+  ) {
+final messages = ref.watch(chatProvider).messages;
+
+final bool isTypingComplete = messages.isEmpty
+    ? true
+    : messages.last.isTypingComplete;
+    final bool canSend = !isLoading && isTypingComplete;
+
     return SizedBox(
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(1.5.h),
-            decoration: BoxDecoration(
-              color: theme.canvasColor,
-              shape: BoxShape.circle,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(1.5.h),
+              decoration: BoxDecoration(
+                color: theme.canvasColor,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.add,
+                color: theme.secondaryHeaderColor,
+                size: 2.5.h,
+              ),
             ),
-            child: Icon(
-              Icons.add,
-              color: theme.secondaryHeaderColor,
-              size: 2.5.h,
-            ),
-          ),
-          SizedBox(width: 1.w),
-          Expanded(
-            
-            child: AnimatedSize(
+            SizedBox(width: 1.w),
+            Expanded(
               
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut,
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 2.h,
-                  vertical: 1.2.h,
-                ),
-                decoration: BoxDecoration(
-                  color: theme.canvasColor,
-                  borderRadius: BorderRadius.circular(40),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    /// TEXT INPUT
-                    Expanded(
-                      child: TextField(
-                        controller: _textController,
-                        focusNode: _focusNode,
-                        keyboardType: TextInputType.multiline,
-                        textInputAction: TextInputAction.newline,
-                        maxLines: null,
-                        minLines: 1,
-                        style: textTheme.labelMedium,
-                        decoration: InputDecoration(
-                          hintText: 'Ask Elves Anything...',
-                          hintStyle: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.bold,
-                            color: theme.cardColor,
+              child: AnimatedSize(
+                
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeOut,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 2.h,
+                    vertical: 1.2.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: theme.canvasColor,
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      /// TEXT INPUT
+                      Expanded(
+                        child: TextField(
+                          controller: _textController,
+                          focusNode: _focusNode,
+                          keyboardType: TextInputType.multiline,
+                          textInputAction: TextInputAction.newline,
+                          maxLines: null,
+                          minLines: 1,
+                          style: textTheme.labelMedium,
+                          decoration: InputDecoration(
+                            hintText: 'Ask Elves Anything...',
+                            hintStyle: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.bold,
+                              color: theme.cardColor,
+                            ),
+                            border: InputBorder.none,
+                            isDense: true,
                           ),
-                          border: InputBorder.none,
-                          isDense: true,
                         ),
                       ),
-                    ),
-      
-                    SizedBox(width: 2.w),
-      
-                    /// SEND BUTTON
-                    GestureDetector(
-                      onTap: isLoading
-                          ? null
-                          : () async {
-                              final text = _textController.text.trim();
-                              if (text.isEmpty) return;
-      
-                              _textController.clear();
-                              _focusNode.requestFocus();
-      
-                              await ref
-                                  .read(chatProvider.notifier)
-                                  .sendMessage(text);
-      
-                              _scrollToBottom();
-                            },
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: theme.cardColor,
-                        ),
-                        child: Icon(
-                          isLoading ? Icons.square : Icons.send,
-                          size: 18,
-                          color: theme.scaffoldBackgroundColor,
-                        ),
-                      ).animate().scale(duration: 150.ms).fadeIn(),
-                    ),
-                  ],
-                ),
-              ).animate().fadeIn(duration: 250.ms).slideY(begin: 0.2),
+        
+                      SizedBox(width: 2.w),
+        
+                      /// SEND BUTTON
+                      GestureDetector(
+                        onTap: isLoading  
+                            ? null
+                            : () async {
+                                final text = _textController.text.trim();
+                                if (text.isEmpty) return;
+        
+                                _textController.clear();
+                                _focusNode.requestFocus();
+        
+                                await ref
+                                    .read(chatProvider.notifier)
+                                    .sendMessage(text);
+        
+                                _scrollToBottom();
+                              },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: theme.dividerColor,
+                          ),
+                          child: Icon(
+                            isLoading ? Icons.square_outlined : Icons.send_outlined,
+                            size: 18,
+                            color: theme.scaffoldBackgroundColor,
+                          ),
+                        ).animate().scale(duration: 150.ms).fadeIn(),
+                      ),
+                    ],
+                  ),
+                ).animate().fadeIn(duration: 250.ms).slideY(begin: 0.2),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -280,7 +289,7 @@ class _ChatViewState extends ConsumerState<ChatView>
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.menu, size:30),
+            icon: const Icon(Icons.menu_outlined, size:30),
             onPressed: () {
               FocusManager.instance.primaryFocus?.unfocus();
               widget.drawerController
@@ -320,7 +329,7 @@ class _ChatViewState extends ConsumerState<ChatView>
 
             if(hasMessages)...[IconButton(
             
-            icon: const Icon(Icons.edit_document,),
+            icon: const Icon(Icons.edit_note_outlined,),
             onPressed: () {
               FocusManager.instance.primaryFocus?.unfocus();
               ref.read(chatProvider.notifier).clearChat();
@@ -336,7 +345,7 @@ class _ChatViewState extends ConsumerState<ChatView>
                    
 
            IconButton(
-            icon: const Icon(Icons.settings_sharp,),
+            icon: const Icon(Icons.settings_outlined,),
             onPressed: () {
               FocusManager.instance.primaryFocus?.unfocus();
                ref.read(shellViewProvider.notifier).state = ShellView.settings;
@@ -353,54 +362,60 @@ class _ChatViewState extends ConsumerState<ChatView>
     final theme = Theme.of(context);
     final isUser = message.role == MessageRole.user;
     final isAssistant = message.role == MessageRole.assistant;
-    final istypingComplete = message.isTypingComplete;
+    final bool istypingComplete = message.isTypingComplete;
 
-    return Align(
-      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Column(
-        crossAxisAlignment: isUser
-            ? CrossAxisAlignment.end
-            : CrossAxisAlignment.start,
-        children: [
-          /// 💬 BUBBLE
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 6),
-            padding: const EdgeInsets.all(12),
-            constraints: BoxConstraints(maxWidth: isUser ? 75.w : 100.w),
-            decoration: BoxDecoration(
-              color: isUser ? theme.canvasColor : Colors.transparent,
-              borderRadius: BorderRadius.circular(18),
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical:  isUser? 1.h : 0),
+      child: Align(
+        alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+        child: Column(
+          crossAxisAlignment: isUser
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
+          children: [
+            /// 💬 BUBBLE
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 6),
+              padding: const EdgeInsets.all(12),
+              constraints: BoxConstraints(maxWidth: isUser ? 75.w : 100.w),
+              decoration: BoxDecoration(
+                color: isUser ? theme.canvasColor : Colors.transparent,
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child:isAssistant && !istypingComplete ?
+        TypingMarkdown(
+      text: message.text,
+      textTheme: textTheme,
+      onCompleted: () {
+        setState((){
+          message.isTypingComplete = true;
+        });
+       
+      },
+        )
+      :
+        MarkdownBody(
+      data: message.text,
+      styleSheet: MarkdownStyleSheet(
+        p: textTheme.displayMedium,
+        strong: textTheme.displayMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+        )
+      
             ),
-            child:isAssistant && !istypingComplete ?
-  TypingMarkdown(
-    text: message.text,
-    textTheme: textTheme,
-    onCompleted: () {
-      message.isTypingComplete = true;
-    },
-  )
-:
-  MarkdownBody(
-    data: message.text,
-    styleSheet: MarkdownStyleSheet(
-      p: textTheme.displayMedium,
-      strong: textTheme.displayMedium?.copyWith(
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-  )
-
-          ),
-  //  color: isUser ? theme.hintColor : theme.shadowColor,
-  //               fontSize: 15.sp,
-          /// ⚡ ACTION ROW (Assistant Only)
-          if (isAssistant && istypingComplete) ...[
-            const SizedBox(height: 3),
-            _assistantActionRow(message),
+        //  color: isUser ? theme.hintColor : theme.shadowColor,
+        //               fontSize: 15.sp,
+            /// ⚡ ACTION ROW (Assistant Only)
+            if (isAssistant && istypingComplete) ...[
+              const SizedBox(height: 3),
+              _assistantActionRow(message),
+            ],
           ],
-        ],
-      ),
-    ).animate().fadeIn(duration: 200.ms).slideY(begin: 0.05, duration: 200.ms);
+        ),
+      ).animate().fadeIn(duration: 200.ms).slideY(begin: 0.05, duration: 200.ms),
+    );
   }
 
   Widget _assistantActionRow(ChatMessage message) {
@@ -424,8 +439,6 @@ class _ChatViewState extends ConsumerState<ChatView>
                 SizedBox(width: 16),
                 _actionIcon(Icons.copy_outlined),
                 SizedBox(width: 16),
-                _actionIcon(Icons.refresh),
-                SizedBox(width: 16),
                 _actionIcon(Icons.share_outlined),
               ],
             ),
@@ -441,7 +454,7 @@ class _ChatViewState extends ConsumerState<ChatView>
     return Icon(
       icon,
       size: 18,
-      color: theme.hintColor.withOpacity(0.8),
+      color: theme.hintColor,
     );
   }
 }
@@ -481,11 +494,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           color: theme.canvasColor,
           percentage: 0.85,
           degree: 15,
-          drawerWidth: 250,
+          drawerWidth: 300,
           slide: true,
           animation: true,
           alignment: Alignment.topLeft,
-          headerView: SearchBox(),
+          
           footerView: DrawerFooter(),
           child: ElvesDrawer(),
         ),
@@ -568,7 +581,7 @@ class TypingMarkdown extends StatefulWidget {
     required this.text,
     required this.textTheme,
      this.onCompleted,
-    this.speed = const Duration(milliseconds: 15),
+    this.speed = const Duration(milliseconds: 5),
   });
 
   @override

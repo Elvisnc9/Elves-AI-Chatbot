@@ -123,12 +123,14 @@ class ChatNotifier extends StateNotifier<ChatState> {
   id: DateTime.now().millisecondsSinceEpoch.toString(),
   text: aiResponse,
   role: MessageRole.assistant,
+  isTypingComplete: false
 );
 
       
       state = state.copyWith(
         messages: [aiMsg, ...state.messages],
         isLoading: false,
+        
       );
       
     } catch (e) {
@@ -138,6 +140,8 @@ class ChatNotifier extends StateNotifier<ChatState> {
       state = state.copyWith(
         isLoading: false,
         error: errorMessage,
+        
+
       );
       
       // Add error message to chat

@@ -12,6 +12,7 @@ class AppTheme {
 
       primaryColor: Colors.white12,
       cardColor: AppColors.light.withOpacity(0.7),
+      dividerColor: Colors.white,
       hintColor: Colors.white,
       secondaryHeaderColor: AppColors.light,
       shadowColor: Colors.white,
@@ -72,6 +73,7 @@ class AppTheme {
     scaffoldBackgroundColor: AppColors.light,
     primaryColor: Colors.white,
     hintColor: Colors.black,
+    dividerColor: Colors.black,
     cardColor: AppColors.dark.withOpacity(0.9),
     canvasColor: Colors.white,
     shadowColor: Colors.black,

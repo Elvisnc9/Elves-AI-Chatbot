@@ -10,9 +10,10 @@ class SearchBox extends StatelessWidget {
     final theme = Theme.of(context);
     
     return Padding(
-      padding: EdgeInsets.only(top: 1.5.h, left: 1.h, right: 2.h),
+      padding: EdgeInsets.only(top: 1.5.h, left: 1.h, right: 4.h),
       child: Container(
-        height: 40,
+        height: 50,
+        
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
           color: theme.scaffoldBackgroundColor,
@@ -20,9 +21,9 @@ class SearchBox extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(Icons.search, color: theme.cardColor.withOpacity(0.6)),
+           
 
-            SizedBox(width: 5.w),
+            SizedBox(width: 1.w),
             Expanded(
               child: TextField(
                 keyboardType: TextInputType.multiline,
@@ -34,14 +35,17 @@ class SearchBox extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: 'Search...',
                   hintStyle: TextStyle(
-                    fontSize: 14.sp,
+                    fontSize: 15.sp,
                     fontWeight: FontWeight.bold,
-                    color: theme.cardColor.withOpacity(0.6)
+                    color: theme.cardColor.withOpacity(0.9)
                   ),
                   border: InputBorder.none,
                 ),
               ),
             ),
+
+             Spacer(),
+            Icon(Icons.search, color: theme.cardColor.withOpacity(0.9), size: 25,),
           ],
         ),
       ),

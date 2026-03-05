@@ -38,7 +38,7 @@ class _SettingsContentState extends ConsumerState<Settings> {
             child: HeroButton(
              child:  Icon( Icons.arrow_back,),
               onPressed: () {
-                ref.read(shellViewProvider.notifier).state = ShellView.home;
+                ref.read(shellViewProvider.notifier).state = ShellView.chat;
               },
             ),
           ),

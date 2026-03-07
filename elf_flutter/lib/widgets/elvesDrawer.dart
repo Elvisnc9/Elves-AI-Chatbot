@@ -60,7 +60,7 @@ class ElvesDrawer extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.only(top: 2.h, bottom: 2.h, left: 0.5.h),
             child: Text(
-              'Describe the Word Anatomy ${i + 1}',
+              'Description of the Word Anatomy ',
               maxLines: 1,
               style: texttheme.labelMedium ,
             ),

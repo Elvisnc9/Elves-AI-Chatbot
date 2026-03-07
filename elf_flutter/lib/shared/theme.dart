@@ -20,6 +20,7 @@ class AppTheme {
       canvasColor: Colors.grey.shade900,
     focusColor: Colors.white10,
 
+
     iconButtonTheme: IconButtonThemeData(
       style: ButtonStyle(
         iconColor: WidgetStatePropertyAll(Colors.white),
@@ -70,12 +71,12 @@ class AppTheme {
 
   static final light = ThemeData(
     brightness: Brightness.light,
-    scaffoldBackgroundColor: AppColors.light,
+    scaffoldBackgroundColor: Colors.white,
     primaryColor: Colors.white,
     hintColor: Colors.black,
     dividerColor: Colors.black,
     cardColor: AppColors.dark.withOpacity(0.9),
-    canvasColor: Colors.white,
+    canvasColor: Colors.grey.withOpacity(0.1),
     shadowColor: Colors.black,
      splashColor: Colors.black,
      focusColor: Colors.grey,

@@ -16,7 +16,7 @@ class SearchBox extends StatelessWidget {
         
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: theme.scaffoldBackgroundColor,
+          color: theme.canvasColor,
           borderRadius: BorderRadius.circular(40),
         ),
         child: Row(

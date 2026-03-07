@@ -36,6 +36,12 @@ enum MessageRole {
   system,
 }
 
+enum MessageType {
+  normal,
+  typing,
+}
+
+
 class ChatState {
   final List<ChatMessage> messages;
   final bool isLoading;
@@ -66,6 +72,7 @@ class ChatMessage {
     final String id;
   final String text;
   final MessageRole role;
+  final MessageType type;
   final DateTime timestamp;
   bool isTypingComplete;
 
@@ -80,6 +87,7 @@ class ChatMessage {
     required this.id,
     required this.text,
     required this.role,
+    this.type = MessageType.normal,
     DateTime? timestamp,
     this.isLiked,
     this.isTypingComplete = false,
@@ -107,31 +115,42 @@ class ChatNotifier extends StateNotifier<ChatState> {
   text: userMessage.trim(),
   role: MessageRole.user,
 );
+
+  final typingMsg = ChatMessage(
+  id: 'typing',
+  text: '',
+  role: MessageRole.assistant,
+  type: MessageType.typing,
+);
     
     state = state.copyWith(
-      messages: [userMsg, ...state.messages],
+      messages: [typingMsg, userMsg, ...state.messages],
       isLoading: true,
       error: null,
     );
 
+  
+
     try {
       // Call Serverpod endpoint
-      final aiResponse = await client.chat.sendMessage(userMessage);
+    final aiResponse = await client.chat.sendMessage(userMessage);
 
-      // Add AI response
-     final aiMsg = ChatMessage(
+// remove typing message
+final updatedMessages = [...state.messages];
+updatedMessages.removeWhere((m) => m.type == MessageType.typing);
+
+final aiMsg = ChatMessage(
   id: DateTime.now().millisecondsSinceEpoch.toString(),
   text: aiResponse,
   role: MessageRole.assistant,
-  isTypingComplete: false
+  isTypingComplete: false,
 );
 
-      
-      state = state.copyWith(
-        messages: [aiMsg, ...state.messages],
-        isLoading: false,
-        
-      );
+state = state.copyWith(
+  messages: [aiMsg, ...updatedMessages],
+  isLoading: false,
+);
+
       
     } catch (e) {
       // Handle error

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
+import 'package:flutter_animate/flutter_animate.dart';
+
 /// 🔥 PURE BOUNCING DOTS ONLY (No bubble, No scaling)
 /// Exactly what you asked for — just three dots bouncing freely
 /// Super smooth, staggered, natural WhatsApp-style bounce
@@ -57,7 +59,7 @@ class _BouncingTypingDotsState extends State<BouncingTypingDots>
           ),
         );
       }),
-    );
+    ).animate().fadeIn(duration: 250.ms).slideY(begin: 0.3);
   }
 }
 

@@ -8,11 +8,11 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:the_responsive_builder/the_responsive_builder.dart';
 
-import 'package:elf_flutter/widgets/elvesDrawer.dart';
 import 'package:elf_flutter/state/chatState.dart';
 import 'package:elf_flutter/state/shellView.dart';
-import 'package:elf_flutter/widgets/ChatScreem/typingdot_indicator.dart';
 import 'package:elf_flutter/widgets/ChatScreem/chatModels.dart';
+import 'package:elf_flutter/widgets/ChatScreem/typingdot_indicator.dart';
+import 'package:elf_flutter/widgets/elvesDrawer.dart';
 
 class ChatView extends ConsumerStatefulWidget {
   final DrawerScaffoldController drawerController;
@@ -47,9 +47,10 @@ class _ChatViewState extends ConsumerState<ChatView>
    ChatState get chatState => ref.watch(chatProvider);
   List<ChatMessage> get messages => chatState.messages;
  bool get hasMessages => messages.isNotEmpty;
+   ThemeData get theme => Theme.of(context);
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+  
 
     // Detect first message arrival (not typing)
     if (messages.length != _prevMessageCount) {
@@ -88,7 +89,7 @@ class _ChatViewState extends ConsumerState<ChatView>
                     reverse: true,
                     padding: EdgeInsets.only(
                       top: 70,
-                      bottom: 10.h,
+                      bottom: 12.h,
                       left: 12,
                       right: 12,
                     ),
@@ -131,13 +132,10 @@ class _ChatViewState extends ConsumerState<ChatView>
       right: 0,
             child: _buildInputBar(theme, chatState.isLoading,  )),
 
+
+
           // ── LAYER 4: Loading dots ───────────────────────────────
-          if (chatState.isLoading)
-            Positioned(
-              bottom: 10.h,
-              left: 20,
-              child: BouncingTypingDots(),
-            ),
+     
         ],
       ),
     );
@@ -174,10 +172,6 @@ class _ChatViewState extends ConsumerState<ChatView>
   ) {
 final messages = ref.watch(chatProvider).messages;
 
-final bool isTypingComplete = messages.isEmpty
-    ? true
-    : messages.last.isTypingComplete;
-    final bool canSend = !isLoading && isTypingComplete;
 
     return SizedBox(
       child: Padding(
@@ -294,32 +288,6 @@ final bool isTypingComplete = messages.isEmpty
                   .openDrawer(); // use controller from parent
             },
           ),
-          // GestureDetector(
-          //   onTap: () =>
-          //       ref.read(shellViewProvider.notifier).state = ShellView.onboarding,
-          //   child: Container(
-          //     padding: const EdgeInsets.all(6),
-          //     decoration: BoxDecoration(
-          //       color: theme.scaffoldBackgroundColor.withOpacity(0.4),
-          //       borderRadius: BorderRadius.circular(20),
-          //     ),
-          //     child: Row(
-          //       children: [
-          //         const Icon(Icons.star, color: Colors.yellow, size: 20),
-          //         const SizedBox(width: 4),
-          //         Text(
-          //           'Upgrade',
-          //           style: theme.textTheme.bodyMedium?.copyWith(
-          //             color: Colors.white,
-          //           ),
-          //         ),
-                
-
-                  
-          //       ],
-          //     ),
-          //   ),
-          // ),
 
 
             Spacer(),
@@ -362,6 +330,17 @@ final bool isTypingComplete = messages.isEmpty
     final isAssistant = message.role == MessageRole.assistant;
     final bool istypingComplete = message.isTypingComplete;
 
+
+
+ if (message.type == MessageType.typing) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: BouncingTypingDots(),
+      ),
+    );
+  }
     return Padding(
       padding: EdgeInsets.symmetric(vertical:  isUser? 1.h : 0),
       child: Align(
@@ -403,6 +382,8 @@ final bool isTypingComplete = messages.isEmpty
         )
       
             ),
+            
+            
         //  color: isUser ? theme.hintColor : theme.shadowColor,
         //               fontSize: 15.sp,
             /// ⚡ ACTION ROW (Assistant Only)
@@ -457,14 +438,8 @@ final bool isTypingComplete = messages.isEmpty
   }
 }
 
-// AnimatedOpacity(
-//   opacity: hasMessages ? 0.0 : 1.0,
-//   duration: const Duration(milliseconds: 250),
-//   child: IgnorePointer(
-//     ignoring: hasMessages,
-//     child: _buildSuggestionChips(theme),
-//   ),
-// ),
+
+
 
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key});
@@ -489,12 +464,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       controller: drawerController,
       drawers: [
         SideDrawer(
-          color: theme.canvasColor,
+          color: theme.scaffoldBackgroundColor,
           percentage: 0.85,
           degree: 15,
           drawerWidth: 300,
           slide: true,
-          animation: true,
+          
           alignment: Alignment.topLeft,
           
           footerView: DrawerFooter(),
@@ -508,63 +483,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 }
 
-
-
-
-    // Widget MenuBar(BuildContext context, WidgetRef ref) {
-    //   return  Padding(
-    //     padding:  EdgeInsets.only(top: 5.h),
-    //     child: Row(
-    //                       children: [
-    //                         /// ☰ MENU (OPENS DRAWER)
-    //                         IconButton(
-    //                           onPressed: () {
-    //                             FocusManager.instance.primaryFocus?.unfocus();
-    //                             drawerController.openDrawer();
-    //                           },
-    //                           icon: const Icon(Icons.menu),
-    //                         ),
-    //                         SizedBox(width: 5.w),
-    //                         Material(
-    //                           type: MaterialType.transparency,
-    //                           child: GestureDetector(
-    //                             onTap: () {
-    //                               FocusManager.instance.primaryFocus?.unfocus();
-    //                               ref.read(shellViewProvider.notifier).state =
-    //                                   ShellView.home;
-    //                             },
-    //                             child: Container(
-    //                               padding: EdgeInsets.all(1.h),
-    //                               decoration: BoxDecoration(
-    //                                 color:
-    //                                     theme.scaffoldBackgroundColor.withOpacity(0.4),
-    //                                 borderRadius: BorderRadius.circular(20),
-    //                               ),
-    //                               child: Row(
-    //                                 children: [
-    //                                   Icon(
-    //                                     Icons.star,
-    //                                     color: Colors.yellow,
-    //                                     size: 2.h,
-    //                                   ),
-    //                                   SizedBox(width: 1.w),
-    //                                   Text(
-    //                                     'Upgrade',
-    //                                     style: textTheme.displayLarge?.copyWith(
-    //                                       fontWeight: FontWeight.bold,
-    //                                       fontSize: 12.sp,
-    //                                     ),
-    //                                   ),
-    //                                 ],
-    //                               ),
-    //                             ),
-    //                           ),
-    //                         ),
-    //                       ],
-    //                     ),
-    //   );
-    // }
-  
 
 
 

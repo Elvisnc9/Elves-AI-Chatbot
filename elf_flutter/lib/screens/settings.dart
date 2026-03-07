@@ -319,22 +319,29 @@ class _SettingsContentState extends ConsumerState<Settings> {
   Widget _subscriptionTile() {
     final Texttheme = Theme.of(context).textTheme;
         final Themee = Theme.of(context);
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          color: Themee.canvasColor,
-          borderRadius: BorderRadius.circular(12),
+    return Container(
+      padding: EdgeInsets.all(12),
+     decoration: BoxDecoration(
+            color: Themee.canvasColor,
+            borderRadius: BorderRadius.circular(16),
+          ),
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            color: Themee.dividerColor,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(Icons.shield, color: Colors.yellow),
         ),
-        child: Icon(Icons.shield, color: Colors.yellow),
+        title: Text(
+          'Upgrade to Robo-pro',
+          style: Texttheme.labelMedium?.copyWith(color: Themee.secondaryHeaderColor),
+        ),
+        onTap: () {},
       ),
-      title: Text(
-        'Upgrade to SuperGenie',
-        style: Texttheme.labelMedium?.copyWith(color: Themee.secondaryHeaderColor),
-      ),
-      onTap: () {},
     );
   }
 }

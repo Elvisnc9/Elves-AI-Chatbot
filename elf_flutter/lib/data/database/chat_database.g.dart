@@ -38,8 +38,19 @@ class $ConversationsTable extends Conversations
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _lastActiveAtMeta = const VerificationMeta(
+    'lastActiveAt',
+  );
   @override
-  List<GeneratedColumn> get $columns => [id, title, createdAt];
+  late final GeneratedColumn<DateTime> lastActiveAt = GeneratedColumn<DateTime>(
+    'last_active_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, title, createdAt, lastActiveAt];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -73,6 +84,17 @@ class $ConversationsTable extends Conversations
     } else if (isInserting) {
       context.missing(_createdAtMeta);
     }
+    if (data.containsKey('last_active_at')) {
+      context.handle(
+        _lastActiveAtMeta,
+        lastActiveAt.isAcceptableOrUnknown(
+          data['last_active_at']!,
+          _lastActiveAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_lastActiveAtMeta);
+    }
     return context;
   }
 
@@ -94,6 +116,10 @@ class $ConversationsTable extends Conversations
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
       )!,
+      lastActiveAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_active_at'],
+      )!,
     );
   }
 
@@ -107,10 +133,12 @@ class Conversation extends DataClass implements Insertable<Conversation> {
   final String id;
   final String title;
   final DateTime createdAt;
+  final DateTime lastActiveAt;
   const Conversation({
     required this.id,
     required this.title,
     required this.createdAt,
+    required this.lastActiveAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -118,6 +146,7 @@ class Conversation extends DataClass implements Insertable<Conversation> {
     map['id'] = Variable<String>(id);
     map['title'] = Variable<String>(title);
     map['created_at'] = Variable<DateTime>(createdAt);
+    map['last_active_at'] = Variable<DateTime>(lastActiveAt);
     return map;
   }
 
@@ -126,6 +155,7 @@ class Conversation extends DataClass implements Insertable<Conversation> {
       id: Value(id),
       title: Value(title),
       createdAt: Value(createdAt),
+      lastActiveAt: Value(lastActiveAt),
     );
   }
 
@@ -138,6 +168,7 @@ class Conversation extends DataClass implements Insertable<Conversation> {
       id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      lastActiveAt: serializer.fromJson<DateTime>(json['lastActiveAt']),
     );
   }
   @override
@@ -147,20 +178,29 @@ class Conversation extends DataClass implements Insertable<Conversation> {
       'id': serializer.toJson<String>(id),
       'title': serializer.toJson<String>(title),
       'createdAt': serializer.toJson<DateTime>(createdAt),
+      'lastActiveAt': serializer.toJson<DateTime>(lastActiveAt),
     };
   }
 
-  Conversation copyWith({String? id, String? title, DateTime? createdAt}) =>
-      Conversation(
-        id: id ?? this.id,
-        title: title ?? this.title,
-        createdAt: createdAt ?? this.createdAt,
-      );
+  Conversation copyWith({
+    String? id,
+    String? title,
+    DateTime? createdAt,
+    DateTime? lastActiveAt,
+  }) => Conversation(
+    id: id ?? this.id,
+    title: title ?? this.title,
+    createdAt: createdAt ?? this.createdAt,
+    lastActiveAt: lastActiveAt ?? this.lastActiveAt,
+  );
   Conversation copyWithCompanion(ConversationsCompanion data) {
     return Conversation(
       id: data.id.present ? data.id.value : this.id,
       title: data.title.present ? data.title.value : this.title,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      lastActiveAt: data.lastActiveAt.present
+          ? data.lastActiveAt.value
+          : this.lastActiveAt,
     );
   }
 
@@ -169,51 +209,59 @@ class Conversation extends DataClass implements Insertable<Conversation> {
     return (StringBuffer('Conversation(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('lastActiveAt: $lastActiveAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, title, createdAt);
+  int get hashCode => Object.hash(id, title, createdAt, lastActiveAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Conversation &&
           other.id == this.id &&
           other.title == this.title &&
-          other.createdAt == this.createdAt);
+          other.createdAt == this.createdAt &&
+          other.lastActiveAt == this.lastActiveAt);
 }
 
 class ConversationsCompanion extends UpdateCompanion<Conversation> {
   final Value<String> id;
   final Value<String> title;
   final Value<DateTime> createdAt;
+  final Value<DateTime> lastActiveAt;
   final Value<int> rowid;
   const ConversationsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.lastActiveAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ConversationsCompanion.insert({
     required String id,
     required String title,
     required DateTime createdAt,
+    required DateTime lastActiveAt,
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        title = Value(title),
-       createdAt = Value(createdAt);
+       createdAt = Value(createdAt),
+       lastActiveAt = Value(lastActiveAt);
   static Insertable<Conversation> custom({
     Expression<String>? id,
     Expression<String>? title,
     Expression<DateTime>? createdAt,
+    Expression<DateTime>? lastActiveAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
       if (createdAt != null) 'created_at': createdAt,
+      if (lastActiveAt != null) 'last_active_at': lastActiveAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -222,12 +270,14 @@ class ConversationsCompanion extends UpdateCompanion<Conversation> {
     Value<String>? id,
     Value<String>? title,
     Value<DateTime>? createdAt,
+    Value<DateTime>? lastActiveAt,
     Value<int>? rowid,
   }) {
     return ConversationsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
       createdAt: createdAt ?? this.createdAt,
+      lastActiveAt: lastActiveAt ?? this.lastActiveAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -244,6 +294,9 @@ class ConversationsCompanion extends UpdateCompanion<Conversation> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
+    if (lastActiveAt.present) {
+      map['last_active_at'] = Variable<DateTime>(lastActiveAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -256,6 +309,7 @@ class ConversationsCompanion extends UpdateCompanion<Conversation> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('createdAt: $createdAt, ')
+          ..write('lastActiveAt: $lastActiveAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -643,6 +697,7 @@ typedef $$ConversationsTableCreateCompanionBuilder =
       required String id,
       required String title,
       required DateTime createdAt,
+      required DateTime lastActiveAt,
       Value<int> rowid,
     });
 typedef $$ConversationsTableUpdateCompanionBuilder =
@@ -650,6 +705,7 @@ typedef $$ConversationsTableUpdateCompanionBuilder =
       Value<String> id,
       Value<String> title,
       Value<DateTime> createdAt,
+      Value<DateTime> lastActiveAt,
       Value<int> rowid,
     });
 
@@ -674,6 +730,11 @@ class $$ConversationsTableFilterComposer
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastActiveAt => $composableBuilder(
+    column: $table.lastActiveAt,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -701,6 +762,11 @@ class $$ConversationsTableOrderingComposer
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<DateTime> get lastActiveAt => $composableBuilder(
+    column: $table.lastActiveAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ConversationsTableAnnotationComposer
@@ -720,6 +786,11 @@ class $$ConversationsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastActiveAt => $composableBuilder(
+    column: $table.lastActiveAt,
+    builder: (column) => column,
+  );
 }
 
 class $$ConversationsTableTableManager
@@ -756,11 +827,13 @@ class $$ConversationsTableTableManager
                 Value<String> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> lastActiveAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ConversationsCompanion(
                 id: id,
                 title: title,
                 createdAt: createdAt,
+                lastActiveAt: lastActiveAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -768,11 +841,13 @@ class $$ConversationsTableTableManager
                 required String id,
                 required String title,
                 required DateTime createdAt,
+                required DateTime lastActiveAt,
                 Value<int> rowid = const Value.absent(),
               }) => ConversationsCompanion.insert(
                 id: id,
                 title: title,
                 createdAt: createdAt,
+                lastActiveAt: lastActiveAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

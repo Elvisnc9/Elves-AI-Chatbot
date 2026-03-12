@@ -2,6 +2,21 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 
+/// A single turn in the conversation history passed from the client.
+class ChatTurn {
+  final String role; // 'user' or 'model'
+  final String text;
+
+  const ChatTurn({required this.role, required this.text});
+
+  Map<String, dynamic> toGeminiContent() => {
+        'role': role,
+        'parts': [
+          {'text': text}
+        ],
+      };
+}
+
 class GeminiService {
   final String apiKey;
   GeminiService({required this.apiKey});
@@ -12,11 +27,26 @@ class GeminiService {
 
   // ── PUBLIC ────────────────────────────────────────────────────────────────
 
-  Future<String> generateContent(String userMessage) async {
+  /// Sends [userMessage] along with optional [history] (oldest → newest).
+  /// The history should NOT include the current [userMessage] — it is appended
+  /// automatically as the final turn.
+  Future<String> generateContent(
+    String userMessage, {
+    List<ChatTurn> history = const [],
+  }) async {
+    // Build the contents array: history turns + the new user message
+    final contents = [
+      ...history.map((t) => t.toGeminiContent()),
+      {
+        'role': 'user',
+        'parts': [
+          {'text': userMessage}
+        ],
+      },
+    ];
+
     final body = {
-      'contents': [
-        {'parts': [{'text': userMessage}]}
-      ],
+      'contents': contents,
       'generationConfig': {
         'temperature': 0.7,
         'topK': 40,
@@ -37,7 +67,11 @@ class GeminiService {
 
     final body = {
       'contents': [
-        {'parts': [{'text': prompt}]}
+        {
+          'parts': [
+            {'text': prompt}
+          ]
+        }
       ],
       'generationConfig': {
         'temperature': 0.2,
@@ -50,14 +84,11 @@ class GeminiService {
 
   // ── RETRY ─────────────────────────────────────────────────────────────────
 
-  // Delays in seconds between attempts: wait 5s, then 20s, then 40s.
-  // These are intentionally long because Gemini's free tier resets per minute.
   static const List<int> _retryDelays = [5, 20, 40];
 
   Future<Map<String, dynamic>> _withRetry(Map<String, dynamic> body) async {
     for (int i = 0; i <= _retryDelays.length; i++) {
       try {
-        // ← this is the ONLY place _rawPost is called
         return await _rawPost(body);
       } on _RateLimitEx {
         final isLastAttempt = i == _retryDelays.length;
@@ -68,12 +99,10 @@ class GeminiService {
           );
         }
         final wait = _retryDelays[i];
-        // ignore: avoid_print
-        print('[GeminiService] 429 rate limit — waiting ${wait}s before retry ${i + 2}…');
+        print(
+            '[GeminiService] 429 rate limit — waiting ${wait}s before retry ${i + 2}…');
         await Future<void>.delayed(Duration(seconds: wait));
-        // loop continues to next attempt
       }
-      // Any other exception (403, network, etc.) falls through immediately
     }
     throw Exception('_withRetry: unreachable');
   }
@@ -81,8 +110,8 @@ class GeminiService {
   // ── HTTP ──────────────────────────────────────────────────────────────────
 
   Future<Map<String, dynamic>> _rawPost(Map<String, dynamic> body) async {
-    final url = Uri.parse(
-        '$_baseUrl/models/$_model:generateContent?key=$apiKey');
+    final url =
+        Uri.parse('$_baseUrl/models/$_model:generateContent?key=$apiKey');
 
     final http.Response res;
     try {
@@ -105,12 +134,15 @@ class GeminiService {
       }
     }
     if (res.statusCode == 429) throw _RateLimitEx();
-    if (res.statusCode == 403) throw Exception('API key invalid or no permissions');
+    if (res.statusCode == 403) {
+      throw Exception('API key invalid or no permissions');
+    }
     if (res.statusCode == 400) throw Exception('Bad request: ${res.body}');
     throw Exception('Gemini HTTP ${res.statusCode}: ${res.body}');
   }
 
   // ── PARSING ───────────────────────────────────────────────────────────────
+
   String _extractText(Map<String, dynamic> res) {
     final feedback = res['promptFeedback'] as Map<String, dynamic>?;
     final blockReason = feedback?['blockReason'] as String?;
@@ -129,7 +161,8 @@ class GeminiService {
     }
 
     final parts =
-        (candidate['content'] as Map<String, dynamic>?)?['parts'] as List<dynamic>?;
+        (candidate['content'] as Map<String, dynamic>?)?['parts']
+            as List<dynamic>?;
     if (parts == null || parts.isEmpty) {
       throw Exception('No parts in Gemini response');
     }
@@ -141,8 +174,7 @@ class GeminiService {
       if (text != null && text.trim().isNotEmpty) return text.trim();
     }
 
-    throw Exception(
-        'No usable text in Gemini parts: ${jsonEncode(parts)}');
+    throw Exception('No usable text in Gemini parts: ${jsonEncode(parts)}');
   }
 
   String _sanitise(String raw) => raw
@@ -151,13 +183,18 @@ class GeminiService {
       .trim();
 
   static const List<Map<String, String>> _safetySettings = [
-    {'category': 'HARM_CATEGORY_HARASSMENT',  'threshold': 'BLOCK_MEDIUM_AND_ABOVE'},
-    {'category': 'HARM_CATEGORY_HATE_SPEECH', 'threshold': 'BLOCK_MEDIUM_AND_ABOVE'},
+    {
+      'category': 'HARM_CATEGORY_HARASSMENT',
+      'threshold': 'BLOCK_MEDIUM_AND_ABOVE'
+    },
+    {
+      'category': 'HARM_CATEGORY_HATE_SPEECH',
+      'threshold': 'BLOCK_MEDIUM_AND_ABOVE'
+    },
   ];
 }
 
 /// Private sentinel — only caught inside [GeminiService._withRetry].
-/// Implements Exception so it never silently escapes as an Object.
 class _RateLimitEx implements Exception {
   const _RateLimitEx();
   @override

@@ -43,7 +43,7 @@ All AI requests go through the backend for security and scalability.
 
 ### 1. Clone repo
 ```bash
-git clone https://github.com/yourusername/elf-ai.git
+git clone https://github.com/Elvisnc9/Elves-AI-Chatbot.git
 ```
 ### 2. Run Serverpod
 ```bash

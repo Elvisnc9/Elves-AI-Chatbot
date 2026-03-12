@@ -171,8 +171,9 @@ class _ChatEndpoint {
 
   _i3.Future<String> sendMessage(
     _i1.TestSessionBuilder sessionBuilder,
-    String message,
-  ) async {
+    String message, {
+    List<String>? history,
+  }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
@@ -184,7 +185,10 @@ class _ChatEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'chat',
           methodName: 'sendMessage',
-          parameters: _i1.testObjectToJson({'message': message}),
+          parameters: _i1.testObjectToJson({
+            'message': message,
+            'history': history,
+          }),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =

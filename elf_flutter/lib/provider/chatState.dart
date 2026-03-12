@@ -44,13 +44,21 @@ enum MessageType {
 
 class ChatState {
   final List<ChatMessage> messages;
+
+  /// True only while an AI response is in-flight (message sending).
   final bool isLoading;
+  
+  /// True only while a saved conversation is being loaded from the drawer.
+  /// This is the flag that drives the shimmer skeleton.
+  final bool isLoadingConversation;
+
   final String? error;
   final bool isGenerating;
 
   const ChatState({
     this.messages = const [],
     this.isLoading = false,
+    this.isLoadingConversation = false,
     this.error,
     this.isGenerating = false,
   });
@@ -58,12 +66,15 @@ class ChatState {
   ChatState copyWith({
     List<ChatMessage>? messages,
     bool? isLoading,
+    bool? isLoadingConversation,
     bool? isGenerating,
     String? error,
   }) {
     return ChatState(
       messages: messages ?? this.messages,
       isLoading: isLoading ?? this.isLoading,
+      isLoadingConversation:
+          isLoadingConversation ?? this.isLoadingConversation,
       isGenerating: isGenerating ?? this.isGenerating,
       error: error,
     );
@@ -103,7 +114,7 @@ class ChatMessage {
 }
 
 // ==================== CHAT NOTIFIER ====================
-
+const int _historyWindowSize = 10;
 class ChatNotifier extends StateNotifier<ChatState> {
   final Client client;
   final ChatDao chatDao;
@@ -115,6 +126,9 @@ class ChatNotifier extends StateNotifier<ChatState> {
   Future<void> sendMessage(String userMessage) async {
     if (userMessage.trim().isEmpty) return;
 
+
+
+
     /// CREATE CONVERSATION ONLY WHEN FIRST MESSAGE ARRIVES
     if (activeConversationId == null) {
       activeConversationId =
@@ -125,9 +139,16 @@ class ChatNotifier extends StateNotifier<ChatState> {
           id: activeConversationId!,
           title: "New Chat",
           createdAt: DateTime.now(),
+          lastActiveAt: DateTime.now()
         ),
       );
     }
+
+    final history = _buildHistory();
+
+
+
+
 
     /// USER MESSAGE
     final userMsg = ChatMessage(
@@ -164,7 +185,7 @@ class ChatNotifier extends StateNotifier<ChatState> {
 
     try {
       /// CALL AI
-      final aiResponse = await client.chat.sendMessage(userMessage);
+      final aiResponse = await client.chat.sendMessage(userMessage, history: history);
 
       /// REMOVE TYPING
       final updatedMessages = [...state.messages];
@@ -221,10 +242,7 @@ if (userMessages.length == 1) {
             title,
           );
         } catch (_) {
-          await chatDao.updateConversationTitle(
-            activeConversationId!,
-            'New Chat',
-          );
+          
         }
       }
 
@@ -234,6 +252,15 @@ if (userMessages.length == 1) {
 
 
     } catch (e) {
+
+      if (activeConversationId != null) {
+        try {
+          await chatDao.deleteConversation(activeConversationId!);
+        } catch (_) {
+          // best-effort cleanup — ignore secondary DB errors
+        }
+        activeConversationId = null;
+      }
       final appError = mapError(e);
 
       final updatedMessages = [...state.messages];
@@ -253,6 +280,34 @@ if (userMessages.length == 1) {
     }
   }
 
+
+
+//History
+  List<String> _buildHistory() {
+    // state.messages is newest-first → reverse to chronological
+    final chronological = state.messages.reversed.toList();
+
+    // Keep only normal, non-error messages
+    final real = chronological.where((m) =>
+        m.type == MessageType.normal &&
+        !m.isError &&
+        (m.role == MessageRole.user || m.role == MessageRole.assistant));
+
+    // Convert to serialised strings
+    final serialised = real.map((m) {
+      final prefix = m.role == MessageRole.user ? 'user' : 'assistant';
+      return '$prefix: ${m.text}';
+    }).toList();
+
+    // Cap to the window. Each "pair" = 2 entries.
+    final maxEntries = _historyWindowSize * 2;
+    if (serialised.length > maxEntries) {
+      return serialised.sublist((serialised.length - maxEntries) );
+    }
+    return serialised;
+  }
+
+  
   /// NEW CHAT (DO NOT CREATE CONVERSATION YET)
   Future<void> startNewChat() async {
     activeConversationId = null;
@@ -261,9 +316,13 @@ if (userMessages.length == 1) {
 
  
 
-  Future<void> loadConversation(String conversationId) async {
-  state = state.copyWith(isLoading: true);
-
+    Future<void> loadConversation(String conversationId) async {
+    // Show shimmer immediately; clear any existing messages so the
+    // list area hands off cleanly to the skeleton.
+    state = state.copyWith(
+      isLoadingConversation: true,
+      messages: [],
+    );
   /// artificial shimmer delay
   await Future.delayed(const Duration(seconds: 1));
 
@@ -283,10 +342,11 @@ if (userMessages.length == 1) {
 
   activeConversationId = conversationId;
 
-  state = state.copyWith(
-    messages: chatMessages.reversed.toList(),
-    isLoading: false,
-  );
+  
+    state = state.copyWith(
+      messages: chatMessages.reversed.toList(),
+      isLoadingConversation: false, // shimmer off, real messages visible
+    );
 }
 
 

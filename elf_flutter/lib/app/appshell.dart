@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elf_flutter/screens/chatScreen.dart';
-import 'package:elf_flutter/screens/home.dart';
 import 'package:elf_flutter/screens/onboarding.dart';
 import 'package:elf_flutter/screens/settings.dart';
 import 'package:elf_flutter/provider/shellView.dart';
@@ -65,8 +64,6 @@ class AppShellState extends ConsumerState<AppShell>
     switch (view) {
       case ShellView.onboarding:
         return 1.0;
-      case ShellView.home:
-        return 0.8;
       case ShellView.chat:
         return 0.45;
       default:
@@ -80,9 +77,6 @@ class AppShellState extends ConsumerState<AppShell>
       // Center horizontally
       return (screenWidth - 500) / 2;
 
-    case ShellView.home:
-      // Stick to left edge
-      return 0;
 
     case ShellView.chat:
       return 0; // example position for chat
@@ -96,8 +90,6 @@ class AppShellState extends ConsumerState<AppShell>
     switch (view) {
       case ShellView.onboarding:
         return screenHeight * 0.009;
-      case ShellView.home:
-        return screenHeight * 0.05;
       case ShellView.chat:
         return screenHeight * 0.05;
       default:
@@ -114,10 +106,10 @@ class AppShellState extends ConsumerState<AppShell>
           key: const ValueKey('onboarding'),
           onStart: () => startTransition(ShellView.chat),
         );
-      case ShellView.home:
-        return const HomeView(key: ValueKey('home'));
+    
       case ShellView.settings:
         return const Settings(key: ValueKey('settings'));
+  
     }
   }
 

@@ -18,7 +18,24 @@ class ChatDatabase extends _$ChatDatabase {
   ChatDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onUpgrade: (migrator, from, to) async {
+          if (from < 2) {
+            // Add the new lastActiveAt column.
+            // We back-fill it with createdAt so existing rows are valid.
+            await migrator.addColumn(
+              conversations,
+              conversations.lastActiveAt,
+            );
+            await customStatement(
+              'UPDATE conversations SET last_active_at = created_at',
+            );
+          }
+        },
+      );
 
 }
 

@@ -8,6 +8,8 @@ class Conversations extends Table {
 
   DateTimeColumn get createdAt => dateTime()();
 
+  DateTimeColumn get lastActiveAt => dateTime()();
+
   @override
   Set<Column> get primaryKey => {id};
 }

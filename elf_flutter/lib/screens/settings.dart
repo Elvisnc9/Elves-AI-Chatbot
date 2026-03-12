@@ -225,10 +225,10 @@ class _SettingsContentState extends ConsumerState<Settings> {
                 ],
               ),
               SizedBox(height: 12),
-              Text('Elvis', style: Texttheme.labelMedium),
+              Text('Ghost', style: Texttheme.labelMedium),
               SizedBox(height: 6),
               Text(
-                'elvisnonso@gmail.com',
+                'ghostUser@mail.com',
                 style: Texttheme.labelMedium?.copyWith(
                   color: Colors.grey[500],
                   fontSize: 12,

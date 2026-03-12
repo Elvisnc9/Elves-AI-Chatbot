@@ -26,17 +26,25 @@ class EndpointChat extends _i1.EndpointRef {
   @override
   String get name => 'chat';
 
-  _i2.Future<String> sendMessage(String message) =>
-      caller.callServerEndpoint<String>(
-        'chat',
-        'sendMessage',
-        {'message': message},
-      );
+  /// [history] is an optional flat list of serialised turns, alternating
+  /// user / assistant, oldest first:
+  ///   ["user: hello", "assistant: hi!", "user: how are you?", ...]
+  ///
+  /// The client must NOT include the current [message] in [history] —
+  /// the endpoint appends it automatically.
+  _i2.Future<String> sendMessage(
+    String message, {
+    List<String>? history,
+  }) => caller.callServerEndpoint<String>(
+    'chat',
+    'sendMessage',
+    {
+      'message': message,
+      'history': history,
+    },
+  );
 
   /// Generates a short (3–6 word) conversation title from the first exchange.
-  ///
-  /// Returns a fallback title string instead of throwing, so the Flutter app
-  /// always receives a usable value.
   _i2.Future<String> generateTitle(
     String userPrompt,
     String aiResponse,

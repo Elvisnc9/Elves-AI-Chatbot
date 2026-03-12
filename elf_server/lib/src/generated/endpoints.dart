@@ -61,6 +61,11 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<String>(),
               nullable: false,
             ),
+            'history': _i1.ParameterDescription(
+              name: 'history',
+              type: _i1.getType<List<String>?>(),
+              nullable: true,
+            ),
           },
           call:
               (
@@ -69,6 +74,7 @@ class Endpoints extends _i1.EndpointDispatch {
               ) async => (endpoints['chat'] as _i2.ChatEndpoint).sendMessage(
                 session,
                 params['message'],
+                history: params['history'],
               ),
         ),
         'generateTitle': _i1.MethodConnector(

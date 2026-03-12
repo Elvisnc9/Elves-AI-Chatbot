@@ -21,7 +21,7 @@ void main() async {
   ),
 );
 
-const String serverUrl = 'http://10.102.171.254:8080/';
+const String serverUrl = 'http://10.149.193.254:8080/';
  client  = Client(serverUrl) 
     ..connectivityMonitor = FlutterConnectivityMonitor();
  runApp(
@@ -42,7 +42,7 @@ class MyApp extends ConsumerWidget {
 
     return AnimatedTheme(
       duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
+      curve: Curves.easeIn,
       data: themeMode == ThemeMode.dark
           ? AppTheme.darkTheme
           : AppTheme.light,

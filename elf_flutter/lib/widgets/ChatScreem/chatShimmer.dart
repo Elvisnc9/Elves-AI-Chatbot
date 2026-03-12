@@ -39,7 +39,7 @@ Widget chatShimmerList() {
       left: 12,
       right: 12,
     ),
-    itemCount: 12,
+    itemCount: 8,
     itemBuilder: (_, index) {
       final isUser = index % 2 == 0;
       return chatBubbleShimmer(isUser: isUser);

@@ -55,6 +55,16 @@ Future<void> updateConversationTitle(
 }
 
 
+Future<void> touchConversation(String conversationId) {
+    return (update(conversations)
+          ..where((tbl) => tbl.id.equals(conversationId)))
+        .write(
+      ConversationsCompanion(
+        lastActiveAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
   Stream<List<Conversation>> watchAllConversations() {
   return (select(conversations)
         ..orderBy([

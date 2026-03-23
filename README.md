@@ -225,7 +225,14 @@ Three modes supported — **Light**, **Dark**, **System** — persisted across s
 Font: **Plus Jakarta Sans** via Google Fonts across all text styles.
 
 --
+## 📱 Screenshots
+ 
 
+| Onboarding | Chat | Drawer | Settings | Home |
+|---|---|---|---|---|
+| <img src="elf_flutter/assets/onboarding.jpeg" width="180"/> | <img src="elf_flutter/assets/chat.jpeg" width="180"/> | <img src="elf_flutter/assets/drawer.jpeg" width="180"/> | <img src="elf_flutter/assets/settings.jpeg" width="180"/> | <img src="elf_flutter/assets/ome.jpeg" width="180"/> |
+ 
+---
 ---
 
 ## 🤝 Contributing
